@@ -18,6 +18,10 @@
   --border: #f0e2d0;
   --link: var(--orange-700);
   --shadow: 0 1px 3px rgba(154, 52, 18, 0.08);
+
+  /* ヘッダーの高さ。サイドバーの sticky 位置と一致させることで
+     スクロール開始時に目次が動いて見える現象を防ぐ */
+  --header-h: 3.2rem;
 }
 
 * { box-sizing: border-box; }
@@ -53,7 +57,8 @@ body {
 .site-header .inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.6rem 1.2rem;
+  height: var(--header-h);
+  padding: 0 1.2rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -103,7 +108,8 @@ body {
 .sidebar {
   flex: 0 0 220px;
   position: sticky;
-  top: 4.2rem;
+  /* layout の padding-top (1.5rem) と合わせて初期位置と完全一致させる */
+  top: calc(var(--header-h) + 1.5rem);
   align-self: flex-start;
   font-size: 0.92rem;
 }
