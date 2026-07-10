@@ -129,11 +129,13 @@ python server.py</code></pre>
       何かキーを押すとプログラムが終了するので、続けて「3. 初期設定」に進んでください。
     </p>
     <div class="note">
-      このとき「not exist ○○ file. please check your config.」というエラー
-      (○○ は <code>bedrock_server.exe</code> のパス)が同時に表示されることがあります。
-      これは <code>server_name</code> の初期値が <code>bedrock_server.exe</code>(Minecraft 統合版)のためで、
-      別のサーバーを使う場合はこの時点で表示されるのが正常です。
-      「3. 初期設定」で <code>server_name</code> を書き換えると表示されなくなります。
+      このとき、次のようなエラーが同時に表示されることがあります。
+      <pre style="margin: 0.5rem 0;"><code>not exist D:\myserver\bedrock_server.exe file. please check your config.</code></pre>
+      これは「設定されたサーバー本体のファイルが見つからない」という意味です。
+      <code>.config</code> の <code>server_name</code> の初期値が <code>bedrock_server.exe</code>
+      (Minecraft 統合版のファイル名)になっているため、それ以外のサーバーを使う場合は
+      この時点で表示されるのが正常です。
+      「3. 初期設定」で <code>server_name</code> を自分のサーバーのファイル名に書き換えると表示されなくなります。
     </div>
 
     <div class="note">
@@ -235,7 +237,7 @@ python server.py</code></pre>
             <td><code>.config</code> の <code>server_path</code> に書かれたフォルダが存在しません。サーバー本体があるフォルダのパスに修正してください。</td>
           </tr>
           <tr>
-            <td><code>not exist ○○ file. please check your config</code></td>
+            <td><code>not exist &lt;ファイルのパス&gt; file. please check your config</code></td>
             <td><code>server_path</code> のフォルダ内に <code>server_name</code> のファイルが見つかりません。<code>server_name</code> が実際のファイル名(拡張子まで含む)と一致しているか確認してください。</td>
           </tr>
           <tr>
