@@ -32,9 +32,25 @@
   <main>
     <h1>.config リファレンス</h1>
     <p class="lead">
-      <code>.config</code> は <code>server.py</code> の初回実行時に同じ階層へ自動生成される JSON 形式の設定ファイルです。
+      <code>.config</code> は <code>server.py</code> の初回実行時に同じフォルダへ自動生成される JSON 形式の設定ファイルです。
       不足しているキーは起動時にデフォルト値で自動補完されます。
     </p>
+
+    <h2 id="edit">編集するときの基本</h2>
+    <p>
+      <code>.config</code> はメモ帳などのテキストエディタで開いて編集できます。
+      JSON というテキスト書式で書かれており、次の点に注意してください。
+    </p>
+    <ul>
+      <li>文字列の値は <code>"..."</code>(半角ダブルクォート)で囲みます</li>
+      <li>Windows のパスに含まれる <code>\</code> は <code>\\</code> と 2 つ重ねるか、代わりに <code>/</code> を使います(例: <code>"D:\\a\\"</code> または <code>"D:/a/"</code>)</li>
+      <li>変更した設定は、<code>server.py</code> を再起動すると反映されます</li>
+    </ul>
+    <div class="note">
+      書式を壊してしまい起動時に「config file is broken」と表示された場合は、
+      編集箇所を見直すか、<code>.config</code> を削除して <code>server.py</code> を再実行してください
+      (初期状態の <code>.config</code> が再生成されます。それまでの設定内容は失われます)。
+    </div>
 
     <h2 id="items">設定項目</h2>
     <div class="search-wrap">
@@ -81,6 +97,13 @@
     </div>
 
     <h2 id="default">初期生成される .config</h2>
+    <div class="note">
+      <code>server_path</code> と <code>discord_commands.backup.path</code> の実際の初期値は、
+      <code>server.py</code> を置いた場所に合わせて自動設定されます
+      (以下の <code>path/to/...</code> はあくまで例です)。
+      <code>server_name</code> の初期値は <code>bedrock_server.exe</code> のため、
+      別のサーバーを使う場合は自分のサーバーのファイル名に書き換えてください。
+    </div>
     <pre><code>{
     "allow": {
         "ip": true

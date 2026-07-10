@@ -42,7 +42,7 @@
     <div class="card-grid">
       <a class="card" href="setup.html">
         <div class="card-title"><svg class="mdi" viewBox="0 0 24 24"><path d="M2.81,14.12L5.64,11.29L8.17,10.79C11.39,6.41 17.55,4.22 19.78,4.22C19.78,6.45 17.59,12.61 13.21,15.83L12.71,18.36L9.88,21.19L9.17,17.66C7.76,17.66 7.76,17.66 7.05,16.95C6.34,16.24 6.34,16.24 6.34,14.83L2.81,14.12M5.64,16.95L7.05,18.36L4.39,21.03H2.97V19.61L5.64,16.95M4.22,15.54L5.46,15.71L3,18.16V16.74L4.22,15.54M8.29,18.54L8.46,19.78L7.26,21H5.84L8.29,18.54M13,9.5A1.5,1.5 0 0,0 11.5,11A1.5,1.5 0 0,0 13,12.5A1.5,1.5 0 0,0 14.5,11A1.5,1.5 0 0,0 13,9.5Z"/></svg>導入したい</div>
-        <div class="card-desc">server.py の設置場所、初回起動、トークン設定までの手順。</div>
+        <div class="card-desc">Python や Discord bot の準備から、server.py の設置・初回起動・トークン設定までの手順。</div>
       </a>
       <a class="card" href="commands.html">
         <div class="card-title"><svg class="mdi" viewBox="0 0 24 24"><path d="M13,19V16H21V19H13M8.5,13L2.47,7H6.71L11.67,11.95C12.25,12.54 12.25,13.5 11.67,14.07L6.74,19H2.5L8.5,13Z"/></svg>コマンドを調べたい</div>
@@ -68,19 +68,25 @@
     </p>
 
     <h2 id="quickstart">クイックスタート</h2>
+    <p>
+      あらかじめ <strong>Python 3.12</strong> のインストールと <strong>Discord bot(トークン)の作成</strong>が必要です。
+      これらの準備がまだの方は、<a href="setup.html#prep">導入ガイドの「前提条件」</a>から読み始めてください。
+    </p>
     <ol class="steps">
-      <li>サーバー本体(<code>server.exe</code> / <code>server.jar</code> など)と同じ階層に <code>server.py</code> を配置する</li>
-      <li><code>pip install -r requirements.txt</code> で依存ライブラリをインストールする</li>
-      <li><code>server.py</code> を一度実行し、生成された <code>.token</code> に Discord bot のトークンを記述する</li>
+      <li><a href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">GitHub</a> から入手した <code>server.py</code> と <code>requirements.txt</code> を、サーバー本体(<code>server.exe</code> / <code>server.jar</code> など)と同じフォルダに配置する</li>
+      <li>コマンドプロンプト(ターミナル)でそのフォルダを開き、<code>pip install -r requirements.txt</code> で依存ライブラリをインストールする</li>
+      <li><code>python server.py</code> を一度実行し、生成された <code>.token</code> に Discord bot のトークンを記述する</li>
       <li><code>.config</code> の <code>server_path</code> / <code>server_name</code> を確認・修正する</li>
-      <li>再度 <code>server.py</code> を実行する — サーバー本体は bot が自動で起動します</li>
+      <li>再度 <code>python server.py</code> を実行する — サーバー本体は bot が自動で起動します</li>
     </ol>
-    <p>詳しい手順と注意点は <a href="setup.html">導入ガイド</a> を参照してください。</p>
+    <p>各手順の詳しいやり方と注意点は <a href="setup.html">導入ガイド</a> を参照してください。</p>
 
     <h2 id="permission">権限レベルについて</h2>
     <p>
+      権限レベルとは、bot がユーザーごとに持つ「どこまで操作を許すか」を表す数値で、
+      数字が大きいほど強い操作(bot の終了やファイルの削除など)ができます。
       各コマンドには必要権限レベルが設定されており、
-      実行にはそのレベル以上の権限が必要です。
+      実行にはそのレベル以上の権限が必要です(レベル 0 のコマンドは誰でも実行できます)。
       ユーザーの権限は <code>/permission change</code> で変更でき、必要レベル自体も
       <a href="config.html">.config</a> の <code>commands_level</code> で調整できます。
       初期状態では Discord サーバーの管理者権限を持つユーザーが最高権限として扱われます。

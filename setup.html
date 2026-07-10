@@ -31,27 +31,102 @@
 
   <main>
     <h1>導入ガイド</h1>
-    <p class="lead">server-bot の設置から初回起動、Discord bot として動き始めるまでの手順です。</p>
+    <p class="lead">
+      server-bot の設置から初回起動、Discord bot として動き始めるまでの手順です。
+      プログラミングの経験がなくても進められるように、必要な準備から順に説明します。
+      途中でエラーが出た場合は、ページ末尾の<a href="#trouble">つまずきやすいポイント</a>と<a href="#glossary">用語集</a>も参照してください。
+    </p>
 
-    <h2 id="place">1. 設置</h2>
-    <p><code>server.py</code> を任意の場所に配置します。</p>
+    <h2 id="prep">0. 前提条件 — 最初にそろえるもの</h2>
+    <p>server-bot を動かすには、次の 4 つが必要です。すでに用意できているものは読み飛ばしてください。</p>
+
+    <h3 id="prep-python">(1) Python 3.12</h3>
+    <p>
+      server-bot は Python というプログラミング言語で書かれたプログラムです。
+      動かすにはお使いのパソコンに Python 本体(バージョン 3.12.x)をインストールする必要があります。
+      <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">Python 公式サイト</a>からインストーラーをダウンロードして実行してください。
+    </p>
     <div class="note">
-      推奨ディレクトリは、実行する <code>server.[exe/jar]</code> などが存在する階層です。
-      その場所が root ディレクトリとなり、一部の権限を持つ Discord ユーザーはファイル操作
+      Windows のインストーラーでは、最初の画面で「<strong>Add python.exe to PATH</strong>」に必ずチェックを入れてください。
+      チェックを入れ忘れると、後の手順で <code>python</code> コマンドがコマンドプロンプトから認識されません。
+    </div>
+
+    <h3 id="prep-bot">(2) Discord bot(アプリケーション)とトークン</h3>
+    <p>
+      bot を動かすには「<strong>トークン</strong>」と呼ばれる長い英数字の文字列が必要です。
+      これは bot 本人であることを証明する、パスワードのようなものです。
+      トークンは <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a> で bot を作成すると発行されます。
+      大まかな流れは次のとおりです(画面の詳細な操作は
+      <a href="https://discord.com/developers/docs/quick-start/getting-started" target="_blank" rel="noopener">Discord 公式ドキュメント</a>(英語)を参照してください)。
+    </p>
+    <ol class="steps">
+      <li>Discord Developer Portal にログインし、「New Application」から新しいアプリケーション(bot)を作成する</li>
+      <li>左メニューの「Bot」ページでトークンを発行(Reset Token)し、コピーして控えておく</li>
+      <li>同じ「Bot」ページの Privileged Gateway Intents にある「<strong>Message Content Intent</strong>」を必ずオンにする</li>
+    </ol>
+    <div class="warn">
+      トークンは絶対に他人に教えたり、インターネット上に公開したりしないでください。
+      トークンを知っている人は誰でもあなたの bot を操作できます。
+      誤って公開してしまった場合は、Developer Portal で Reset Token を行い、新しいトークンに差し替えてください。
+    </div>
+
+    <h3 id="prep-invite">(3) bot を自分の Discord サーバーに招待する</h3>
+    <p>
+      作成した bot は、招待 URL から自分の Discord サーバーに追加しておきます。
+      Developer Portal の「OAuth2」ページにある URL Generator で
+      <code>bot</code> と <code>applications.commands</code> にチェックを入れて URL を生成し、
+      その URL をブラウザで開いて追加先のサーバーを選択してください。
+    </p>
+
+    <h3 id="prep-server">(4) 管理したいゲームサーバー本体</h3>
+    <p>
+      server-bot はゲームサーバーを「操作する」ツールであり、ゲームサーバーそのものは含まれていません。
+      Minecraft 統合版なら <code>bedrock_server.exe</code>、Java 版なら <code>server.jar</code> など、
+      動かしたいサーバー本体を各公式サイトから入手してください。
+      先に一度サーバー単体で起動できることを確認しておくと、後の切り分けが楽になります。
+    </p>
+
+    <h2 id="place">1. server.py の入手と設置</h2>
+    <p>
+      <a href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">GitHub リポジトリ</a>から
+      <code>server.py</code> と <code>requirements.txt</code> の 2 ファイルを入手します
+      (緑色の「Code」ボタン →「Download ZIP」でリポジトリ全体をダウンロードし、その中からこの 2 ファイルを取り出すのが簡単です)。
+    </p>
+    <p>
+      入手した <code>server.py</code> と <code>requirements.txt</code> を、
+      ゲームサーバー本体(<code>server.exe</code> / <code>server.jar</code> など)と同じフォルダにコピーします。
+    </p>
+    <div class="note">
+      推奨の設置場所は、実行する <code>server.[exe/jar]</code> などが存在するフォルダ(階層)です。
+      その場所が bot にとっての root ディレクトリ(ファイル操作の起点)となり、
+      一部の権限を持つ Discord ユーザーはこのフォルダ以下に対してファイル操作
       (<code>/cmd stdin</code> 系コマンド)を行えます。
     </div>
     <div class="note">
-      ただし <code>server.exe</code> や <code>server.jar</code> 本体が存在する階層は、
+      ただし <code>server.exe</code> や <code>server.jar</code> 本体が存在するフォルダは、
       ドライブ直上(Windows の場合 <code>C:\</code> 直下など)でない必要があります。
-      必ず何らかのディレクトリの中に入れてください。
-      これは初期状態では <code>../backup/</code> 内にバックアップが生成されるためです。
+      必ず何らかのフォルダの中に入れてください。
+      これは初期状態では 1 つ上のフォルダの <code>backup/</code> 内にバックアップが生成されるためです。
     </div>
 
     <h2 id="run">2. 実行</h2>
-    <p>依存ライブラリをインストールしてから <code>server.py</code> を実行します。</p>
+    <p>
+      コマンドプロンプト(ターミナル)を開き、<code>server.py</code> を置いたフォルダで次の 2 つのコマンドを順に実行します。
+      1 行目は依存ライブラリ(bot の動作に必要な追加部品)のインストールで、初回のみ必要です。
+      2 行目で server-bot が起動します。
+    </p>
+    <div class="note">
+      Windows でのコマンドプロンプトの開き方: エクスプローラーで <code>server.py</code> のあるフォルダを開き、
+      アドレスバー(上部のパス表示欄)に <code>cmd</code> と入力して Enter を押すと、
+      そのフォルダを開いた状態でコマンドプロンプトが起動します。
+    </div>
     <pre><code>pip install -r requirements.txt
 python server.py</code></pre>
-    <p>実行すると、<code>server.py</code> と同じ階層に <code>.config</code> と <code>.token</code> が生成されます。</p>
+    <p>
+      初回実行では、<code>server.py</code> と同じフォルダに設定ファイル <code>.config</code> と <code>.token</code> が生成され、
+      「please write token in ...」と表示されて一度終了します。<strong>これは正常な動作です。</strong>
+      続けて「3. 初期設定」に進んでください。
+    </p>
 
     <div class="note">
       プログラム本体は <code>mikanassets/main/</code> に配置されます。
@@ -60,18 +135,29 @@ python server.py</code></pre>
       <code>server.py</code> を再実行すると、再ダウンロードされます。
     </div>
     <div class="note">
-      <code>.token</code> が生成されない場合、<code>.config</code> 内の <code>server_path + server_name</code>
-      が存在していません。サーバーが存在するパスと、拡張子を含むサーバーのファイル名に修正してください。
+      <code>.token</code> が生成されず「not exist server_path dir」と表示される場合は、
+      <code>.config</code> 内の <code>server_path</code> のフォルダが存在していません。
+      サーバー本体が存在するフォルダのパスに修正して再実行してください。
     </div>
 
     <h2 id="init">3. 初期設定</h2>
     <ol class="steps">
-      <li><code>.token</code> に Discord bot のトークンを記述する</li>
-      <li><code>.config</code> の <code>server_path</code> に <code>server.[exe/bat]</code>(jar を実行する場合は bat)へのパスを記述する</li>
-      <li>再度 <code>server.py</code> を起動する</li>
+      <li><code>.token</code> をメモ帳などのテキストエディタで開き、「ここにtokenを入力」と書かれた内容を消して、<a href="#prep-bot">前提条件 (2)</a> で控えた Discord bot のトークンに書き換えて保存する</li>
+      <li><code>.config</code> をメモ帳などで開き、<code>server_name</code> をサーバー本体のファイル名(拡張子まで含む。例: <code>bedrock_server.exe</code>。Java 版の jar を bat 経由で起動する場合はその <code>start.bat</code> など)に書き換える</li>
+      <li><code>server.py</code> をサーバー本体と別のフォルダに置いた場合のみ、<code>server_path</code> をサーバー本体があるフォルダのパスに書き換える</li>
+      <li>再度 <code>python server.py</code> を実行する</li>
     </ol>
+    <div class="note">
+      <code>server.py</code> をサーバー本体と同じフォルダに置いた場合、<code>server_path</code> は
+      自動的にそのフォルダに設定されているため、変更は不要です。
+    </div>
+    <div class="note">
+      <code>.config</code> は JSON というテキスト書式で書かれています。値は <code>"..."</code>(半角ダブルクォート)で囲み、
+      Windows のパスに含まれる <code>\</code> は <code>\\</code> と 2 つ重ねるか、代わりに <code>/</code> を使ってください
+      (例: <code>"D:\\a\\"</code> または <code>"D:/a/"</code>)。
+    </div>
     <p>
-      このとき同時に <code>mikanassets</code> ディレクトリが生成されます。
+      初回起動時には <code>mikanassets</code> ディレクトリも生成されます。
       これは自己アップデートや Web コンソールへのアクセスに必要なファイル群です。
     </p>
     <p>
@@ -80,18 +166,34 @@ python server.py</code></pre>
       そのほかの設定項目は <a href="config.html">.config リファレンス</a> を参照してください。
     </p>
 
-    <h2 id="update">4. アップデート</h2>
+    <h2 id="check">4. 動作確認</h2>
+    <p>
+      起動に成功すると、Discord 上で bot がオンライン表示になり、ゲームサーバー本体も自動的に起動します。
+      bot を招待した Discord サーバーのテキストチャンネルで、メッセージ入力欄に <code>/</code> を入力すると
+      <code>/status</code> や <code>/help</code> などのコマンド候補が表示されます。
+      まずは <code>/status</code> を実行して、サーバーの状態が表示されるか確認してみてください。
+      使えるコマンドは <a href="commands.html">コマンド一覧</a> を参照してください。
+    </p>
+    <div class="note">
+      コマンド候補が表示されない場合は、招待 URL に <code>applications.commands</code> が含まれていたかを確認し、
+      数分待ってから Discord を再起動してみてください(コマンドの反映には時間がかかることがあります)。
+    </div>
+
+    <h2 id="update">5. アップデート</h2>
     <p>
       <code>.config</code> の <code>update.auto</code> が <code>true</code> の場合、起動時に GitHub の最新コミットを確認して自動更新します。
       Discord から <code>/update</code> を実行して手動で更新することもできます。
-      参照するブランチは <code>update.branch</code> で変更できます(通常は <code>main</code> のままにしてください)。
+      参照するブランチ(GitHub 上のバージョン系統の名前)は <code>update.branch</code> で変更できます(通常は <code>main</code> のままにしてください)。
     </p>
 
     <h3 id="java">補足: Java 版 Minecraft サーバー(server.jar)を起動する場合</h3>
     <p class="tips">
       この bot は Minecraft 専用ツールではありませんが、Java 版サーバーを Windows で動かす場合は
-      以下の内容の bat ファイルを作成し、<code>.config</code> の <code>server_name</code> に設定してください
+      以下の内容の bat ファイル(起動用の命令を書いたテキストファイル)を作成し、
+      <code>.config</code> の <code>server_name</code> にそのファイル名を設定してください
       (fabric なら <code>start.bat</code>、forge なら <code>run.bat</code> が一般的です)。
+      bat ファイルは、メモ帳に以下の 1 行を書き、<code>server.jar</code> と同じフォルダに
+      <code>start.bat</code> のような「.bat」で終わる名前で保存すると作成できます。
     </p>
     <pre><code>java -Xmx4048M -Xms1024M -Dfile.encoding=UTF-8 -jar server.jar nogui</code></pre>
     <p class="tips">
@@ -100,6 +202,65 @@ python server.py</code></pre>
       また <code>pause</code> のようなコマンドを bat に記載しないでください
       (このプログラムはサーバーを制御するためのものであり、サーバー以外のコマンドを実行しないでください)。
     </p>
+
+    <h2 id="trouble">つまずきやすいポイント</h2>
+    <p>起動時によくあるエラーメッセージと対処方法です。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>症状 / 表示されるメッセージ</th><th>原因と対処</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>'python' は、内部コマンド…として認識されていません</code></td>
+            <td>Python がインストールされていないか、PATH に登録されていません。<a href="#prep-python">前提条件 (1)</a> に戻り、インストーラーで「Add python.exe to PATH」にチェックを入れて再インストールしてください。</td>
+          </tr>
+          <tr>
+            <td><code>import error. please run 'pip install -r requirements.txt'</code></td>
+            <td>依存ライブラリが不足しています。<code>server.py</code> のあるフォルダで <code>pip install -r requirements.txt</code> を実行してください。</td>
+          </tr>
+          <tr>
+            <td><code>not exist server_path dir</code></td>
+            <td><code>.config</code> の <code>server_path</code> に書かれたフォルダが存在しません。サーバー本体があるフォルダのパスに修正してください。</td>
+          </tr>
+          <tr>
+            <td><code>not exist ○○ file. please check your config</code></td>
+            <td><code>server_path</code> のフォルダ内に <code>server_name</code> のファイルが見つかりません。<code>server_name</code> が実際のファイル名(拡張子まで含む)と一致しているか確認してください。</td>
+          </tr>
+          <tr>
+            <td><code>please write token in …</code> / <code>token が未設定です</code></td>
+            <td><code>.token</code> にトークンが記入されていません。<a href="#init">初期設定</a>の手順 1 を行ってから再実行してください。</td>
+          </tr>
+          <tr>
+            <td><code>トークンが無効です</code></td>
+            <td><code>.token</code> の内容が正しくありません。前後に余計な文字や空白が入っていないか確認するか、Discord Developer Portal でトークンを再発行(Reset Token)して貼り直してください。</td>
+          </tr>
+          <tr>
+            <td>Discord で <code>/</code> を打ってもコマンド候補が出ない</td>
+            <td>bot の招待 URL に <code>applications.commands</code> が含まれていなかった可能性があります。<a href="#prep-invite">前提条件 (3)</a> の URL を作り直して再招待し、数分待ってから Discord を再起動してください。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="glossary">用語集</h2>
+    <p>このドキュメントに登場する用語の簡単な説明です。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>用語</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>コマンドプロンプト / ターミナル</td><td>文字を打ち込んでパソコンに命令するための画面。Windows では「cmd」とも呼ばれます。</td></tr>
+          <tr><td>pip</td><td>Python に付属する、ライブラリ(追加部品)をインストールするためのコマンド。Python を入れると一緒に使えるようになります。</td></tr>
+          <tr><td>トークン</td><td>bot 本人であることを証明する長い英数字の文字列。パスワードと同じように秘密にして扱います。</td></tr>
+          <tr><td>パス</td><td>ファイルやフォルダの場所を表す文字列。例: <code>C:/servers/minecraft/</code></td></tr>
+          <tr><td>ディレクトリ / 階層</td><td>「フォルダ」のこと。「同じ階層」は「同じフォルダの中」という意味です。</td></tr>
+          <tr><td>root ディレクトリ</td><td>bot がファイル操作を行うときの起点となるフォルダ。サーバー本体(と <code>server.py</code>)を置いたフォルダを指します。</td></tr>
+          <tr><td>JSON</td><td>設定などを書くためのテキストの書式。<code>.config</code> で使われています。</td></tr>
+          <tr><td>標準入力</td><td>起動中のサーバーのコンソール(黒い画面)に直接コマンドを打ち込むのと同じ入力のこと。</td></tr>
+          <tr><td>ポート番号 / ポート開放</td><td>ポート番号は通信の窓口の番号。ポート開放は、自宅のルーターを設定して外部からその窓口への通信を許可することです。</td></tr>
+          <tr><td>ブランチ</td><td>GitHub 上でのバージョンの系統名。通常は <code>main</code>(安定した最新版)を使います。</td></tr>
+          <tr><td>リバースプロキシ</td><td>外部からのアクセスを代わりに受けて転送してくれるサーバー。https 化などに使います(上級者向け)。</td></tr>
+        </tbody>
+      </table>
+    </div>
   </main>
 </div>
 

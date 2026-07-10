@@ -35,17 +35,31 @@
 
     <h2 id="access">アクセス方法</h2>
     <ol class="steps">
-      <li>Discord で <code>/tokengen</code> を実行し、ログイン用トークンを入手する</li>
+      <li>Discord で <code>/tokengen</code> を実行し、ログイン用トークンを入手する(このトークンは Web コンソール専用のもので、bot 本体のトークンとは別物です)</li>
       <li>ブラウザで <code>http://ホストのIPアドレス:ポート番号</code> を開く(ポート番号は <a href="config.html"><code>.config</code></a> の <code>web.port</code>)</li>
       <li>ログイン画面でトークンを入力する</li>
     </ol>
     <div class="note">
-      外部(インターネット側)からアクセスするには、ルーター等で追加のポート開放が必要です。
+      「ホストの IP アドレス」とは、<code>server.py</code> を動かしているパソコンのアドレスのことです。
+      <code>server.py</code> を動かしているパソコン自身のブラウザからアクセスする場合は
+      <code>http://localhost:ポート番号</code> と入力できます
+      (例: <code>web.port</code> が <code>8080</code> なら <code>http://localhost:8080</code>。
+      ポート番号が <code>80</code> の場合は <code>:80</code> を省略できます)。
+    </div>
+    <div class="note">
+      外部(インターネット側)からアクセスするには、ルーター等で追加のポート開放
+      (外部からの通信をこのパソコンへ通す設定)が必要です。
+    </div>
+    <div class="warn">
+      ポート開放をするとインターネット上の誰でもログイン画面まで到達できるようになります。
+      仕組みを理解できていないうちは、外部公開はせずに同じパソコン・同じネットワーク内からの利用にとどめることをおすすめします。
     </div>
 
     <h2 id="https">https で公開する場合(推奨)</h2>
     <p>
-      https を用いて運用する場合は、リバースプロキシ(nginx、Cloudflare Tunnel など)を利用してください。
+      https(通信が暗号化されたアクセス)を用いて運用する場合は、
+      リバースプロキシ(外部からのアクセスを代わりに受けて転送するサーバー。nginx、Cloudflare Tunnel など)を利用してください。
+      これはサーバー運用の知識がある方向けの構成です。
     </p>
 
     <h2 id="config">.config の関連設定</h2>
