@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>.config リファレンス | server-bot ドキュメント</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍊</text></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="index.html">🍊 server-bot <span>docs</span></a>
+    <a class="gh-link" href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="group-title">はじめに</div>
+    <a href="index.html">ホーム</a>
+    <div class="group-title">ガイド</div>
+    <a href="setup.html">導入ガイド</a>
+    <a href="web.html">Web コンソール</a>
+    <a href="extensions.html">拡張機能</a>
+    <div class="group-title">リファレンス</div>
+    <a href="commands.html">コマンド一覧</a>
+    <a href="config.html" class="active">.config リファレンス</a>
+  </nav>
+
+  <main>
+    <h1>.config リファレンス</h1>
+    <p class="lead">
+      <code>.config</code> は <code>server.py</code> の初回実行時に同じ階層へ自動生成される JSON 形式の設定ファイルです。
+      不足しているキーは起動時にデフォルト値で自動補完されます。
+    </p>
+
+    <h2 id="items">設定項目</h2>
+    <input class="filter-box" id="filter" type="search"
+           placeholder="🔍 設定項目名や説明で絞り込み(例: port, 権限, backup)" autocomplete="off">
+    <p class="filter-count" id="filter-count"></p>
+
+    <div class="table-wrap">
+      <table id="cfg-table">
+        <thead>
+          <tr><th>項目</th><th>説明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>allow</code></td><td>各コマンドの実行を許可するかどうか(現在は <code>/ip</code> にのみ実装されています)。</td></tr>
+          <tr><td><code>update.auto</code></td><td>サーバー本体(bot)を起動時に自動更新するか否か。</td></tr>
+          <tr><td><code>update.branch</code></td><td>自動更新時に参照する GitHub ブランチ名。存在しないブランチを指定すると更新に失敗します(通常は <code>main</code>)。</td></tr>
+          <tr><td><code>server_path</code></td><td>server 本体のパス。例えば <code>D:\a\server.jar</code> に配置されていれば <code>D:\\a\\</code> または <code>D:/a/</code>。</td></tr>
+          <tr><td><code>server_name</code></td><td>server 本体のファイル名。Java 版 Minecraft の場合、サーバー起動に利用する <code>server.bat</code> 等を入力してください(GUI 起動させないでください)。</td></tr>
+          <tr><td><code>server_args</code></td><td>server 起動時のコンソール引数。例えば Terraria を起動する場合 <code>-world /path/to/world.wld</code> を入力してください。</td></tr>
+          <tr><td><code>server_char_encoding</code></td><td>server のコンソール出力を受け取る際に使用する文字コード。</td></tr>
+          <tr><td><code>log.server</code> / <code>log.all</code></td><td>各種ログを保存するか否か。<code>server</code> を true にするとサーバーの実行ログをサーバーと同じディレクトリに保存し、<code>all</code> を true にするとすべてのログを <code>server.py</code> と同じディレクトリに保存します。</td></tr>
+          <tr><td><code>web.secret_key</code></td><td>Flask で利用する鍵(<code>app.secret_key</code>)。十分に強固な文字列を設定してください。</td></tr>
+          <tr><td><code>web.port</code></td><td>web サーバーのポート番号。<code>/cmd stdin send-discord</code> でもこのポート番号を利用します。</td></tr>
+          <tr><td><code>web.use_front_page</code></td><td>web ページからの操作を許可するか否か。<code>false</code> の場合でもファイルダウンロードはできます。</td></tr>
+          <tr><td><code>discord_commands.permission.commands_level</code></td><td>すべてのコマンドについて必要権限レベルを定義するリスト。コマンド実行には書き込まれた値以上の権限が必要です。</td></tr>
+          <tr><td><code>discord_commands.ip.address.prefix</code></td><td><code>/ip</code> で表示するアドレスの前に付加する文字列。</td></tr>
+          <tr><td><code>discord_commands.ip.address.suffix</code></td><td><code>/ip</code> で表示するアドレスの後に付加する文字列。</td></tr>
+          <tr><td><code>discord_commands.ip.address.body</code></td><td><code>null</code> の場合は外部 IP を自動取得して表示します。文字列を設定するとその値を固定で表示します(自動取得しない)。</td></tr>
+          <tr><td><code>discord_commands.cmd.stdin.sys_files</code></td><td><code>/cmd stdin &lt;mk/rm/rmdir/wget/mv&gt;</code> において、権限を持っていても操作を拒否するファイルのリスト。</td></tr>
+          <tr><td><code>discord_commands.cmd.stdin.send_discord.bits_capacity</code></td><td><code>/cmd stdin send-discord</code> において送信を許可するファイルの最大容量。</td></tr>
+          <tr><td><code>discord_commands.cmd.serverin.allow_cmd</code></td><td><code>/cmd</code> で標準入力への送信を許可するコマンド名のリスト。</td></tr>
+          <tr><td><code>discord_commands.terminal.discord</code></td><td>コンソールとして扱うチャンネル ID。通常 config を直接操作しませんが、指定されたチャンネルではサーバー起動中の入出力が可能になります(<code>allow_cmd</code> で許可された命令のみ)。</td></tr>
+          <tr><td><code>discord_commands.terminal.capacity</code></td><td>Discord にコンソール出力する文字列長の最大値。デフォルトでは送信に時間がかかってもデータを捨てません。</td></tr>
+          <tr><td><code>discord_commands.stop.submit</code></td><td><code>/stop</code> コマンドが入力された際にサーバーの標準入力へ送信するコマンド。</td></tr>
+          <tr><td><code>discord_commands.backup.path</code></td><td>ワールドデータのバックアップパス。例えば <code>D:\server\backup</code> に保存するなら <code>D:\\server\\backup\\</code> または <code>D:/server/backup/</code>。</td></tr>
+          <tr><td><code>discord_commands.admin.members</code></td><td>bot 管理者の権限テーブル。通常は config を直接操作せず、<code>/permission change</code> コマンドで設定します。</td></tr>
+          <tr><td><code>discord_commands.admin.use_discord_admin</code></td><td><code>true</code> の場合、Discord サーバーの管理者権限を持つユーザーを bot の最高権限レベルとして扱います。<code>false</code> にすると Discord 管理者権限を無視し、<code>members</code> テーブルのみで権限を判定します。</td></tr>
+          <tr><td><code>discord_commands.lang</code></td><td>Discord に送信するメッセージの言語(<code>en</code> : 英語, <code>ja</code> : 日本語)。</td></tr>
+          <tr><td><code>enable_advanced_features</code></td><td>Discord 上で管理者権限を持っている場合に <code>sys_files</code> に含まれるファイルを操作可能にするか否か。<code>false</code> の場合はエントリファイル(通常 <code>server.py</code>。名前変更されていても検出されます)に対する <code>/cmd stdin &lt;mk/rm/mv/wget&gt;</code> 操作が権限に関わらず常に拒否されます。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="default">初期生成される .config</h2>
+    <pre><code>{
+    "allow": {
+        "ip": true
+    },
+    "update": {
+        "auto": true,
+        "branch": "main"
+    },
+    "server_path": "path/to/serverdir/",
+    "server_name": "bedrock_server.exe",
+    "server_args": "",
+    "server_char_encoding": "utf-8",
+    "log": {
+        "server": true,
+        "all": false
+    },
+    "web": {
+        "secret_key": "****",
+        "port": 80,
+        "use_front_page": true
+    },
+    "discord_commands": {
+        "permission": {
+            "commands_level": {
+                "stop": 1,
+                "start": 1,
+                "exit": 2,
+                "cmd serverin": 1,
+                "cmd stdin mk": 3,
+                "cmd stdin rm": 2,
+                "cmd stdin mkdir": 2,
+                "cmd stdin rmdir": 2,
+                "cmd stdin ls": 2,
+                "cmd stdin mv": 3,
+                "cmd stdin send-discord": 2,
+                "cmd stdin wget": 3,
+                "cmd stdin unzip": 2,
+                "help": 0,
+                "backup create": 1,
+                "backup apply": 3,
+                "ip": 0,
+                "logs": 1,
+                "permission view": 0,
+                "permission change": 4,
+                "lang": 2,
+                "tokengen": 1,
+                "terminal set": 1,
+                "terminal del": 1,
+                "update": 3,
+                "announce embed": 4,
+                "status": 0
+            }
+        },
+        "ip": {
+            "address": {
+                "prefix": "",
+                "suffix": "",
+                "body": null
+            }
+        },
+        "cmd": {
+            "stdin": {
+                "sys_files": [
+                    ".config",
+                    ".token",
+                    "logs",
+                    "mikanassets"
+                ],
+                "send_discord": {
+                    "bits_capacity": 2147483648
+                }
+            },
+            "serverin": {
+                "allow_cmd": [
+                    "stop"
+                ]
+            }
+        },
+        "terminal": {
+            "discord": false,
+            "capacity": "inf"
+        },
+        "stop": {
+            "submit": "stop"
+        },
+        "backup": {
+            "path": "path/to/backup/"
+        },
+        "admin": {
+            "members": {},
+            "use_discord_admin": true
+        },
+        "lang": "en"
+    },
+    "enable_advanced_features": false
+}</code></pre>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <a href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">sleeping-mikan/server-bot-v3</a>
+</footer>
+
+<script>
+(function () {
+  var box = document.getElementById("filter");
+  var count = document.getElementById("filter-count");
+  var rows = Array.prototype.slice.call(document.querySelectorAll("#cfg-table tbody tr"));
+  function update() {
+    var q = box.value.trim().toLowerCase();
+    var visible = 0;
+    rows.forEach(function (tr) {
+      var text = tr.textContent.toLowerCase();
+      var hit = q === "" || q.split(/\s+/).every(function (w) { return text.indexOf(w) !== -1; });
+      tr.style.display = hit ? "" : "none";
+      if (hit) visible++;
+    });
+    count.textContent = q === "" ? rows.length + " 件の設定項目" : visible + " / " + rows.length + " 件がヒット";
+  }
+  box.addEventListener("input", update);
+  update();
+})();
+</script>
+
+</body>
+</html>

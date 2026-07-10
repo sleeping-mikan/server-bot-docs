@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>server-bot ドキュメント</title>
+<meta name="description" content="Discord からゲームサーバーを管理する server-bot の公式ドキュメント">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍊</text></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="index.html">🍊 server-bot <span>docs</span></a>
+    <a class="gh-link" href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="group-title">はじめに</div>
+    <a href="index.html" class="active">ホーム</a>
+    <div class="group-title">ガイド</div>
+    <a href="setup.html">導入ガイド</a>
+    <a href="web.html">Web コンソール</a>
+    <a href="extensions.html">拡張機能</a>
+    <div class="group-title">リファレンス</div>
+    <a href="commands.html">コマンド一覧</a>
+    <a href="config.html">.config リファレンス</a>
+  </nav>
+
+  <main>
+    <h1>server-bot ドキュメント</h1>
+    <p class="lead">
+      server-bot は、Minecraft(統合版 / Java 版)などのゲームサーバーを
+      <strong>Discord から起動・停止・操作・バックアップ</strong>できる bot です。
+      サーバーログの Discord への転送、Web ブラウザからの操作、拡張機能による機能追加にも対応しています。
+    </p>
+
+    <h2 id="find">知りたいことから探す</h2>
+    <div class="card-grid">
+      <a class="card" href="setup.html">
+        <div class="card-title">🚀 導入したい</div>
+        <div class="card-desc">server.py の設置場所、初回起動、トークン設定までの手順。</div>
+      </a>
+      <a class="card" href="commands.html">
+        <div class="card-title">💬 コマンドを調べたい</div>
+        <div class="card-desc">全 Discord コマンドの機能・引数・必要権限レベルを検索できます。</div>
+      </a>
+      <a class="card" href="config.html">
+        <div class="card-title">⚙️ 設定を変えたい</div>
+        <div class="card-desc">.config の全項目リファレンス。権限レベルや自動更新の設定など。</div>
+      </a>
+      <a class="card" href="web.html">
+        <div class="card-title">🌐 ブラウザから操作したい</div>
+        <div class="card-desc">Web コンソールへのアクセス方法とトークンの発行。</div>
+      </a>
+      <a class="card" href="extensions.html">
+        <div class="card-title">🧩 機能を追加したい</div>
+        <div class="card-desc">拡張機能の配置場所と v3 での API 変更点。</div>
+      </a>
+      <a class="card" href="setup.html#java">
+        <div class="card-title">☕ Java 版サーバーを動かしたい</div>
+        <div class="card-desc">server.jar を起動するための bat の書き方と注意点。</div>
+      </a>
+    </div>
+
+    <h2 id="quickstart">クイックスタート</h2>
+    <ol class="steps">
+      <li>サーバー本体(<code>server.exe</code> / <code>server.jar</code> など)と同じ階層に <code>server.py</code> を配置する</li>
+      <li><code>pip install -r requirements.txt</code> で依存ライブラリをインストールする</li>
+      <li><code>server.py</code> を一度実行し、生成された <code>.token</code> に Discord bot のトークンを記述する</li>
+      <li><code>.config</code> の <code>server_path</code> / <code>server_name</code> を確認・修正する</li>
+      <li>再度 <code>server.py</code> を実行する — サーバー本体は bot が自動で起動します</li>
+    </ol>
+    <p>詳しい手順と注意点は <a href="setup.html">導入ガイド</a> を参照してください。</p>
+
+    <h2 id="permission">権限レベルについて</h2>
+    <p>
+      各コマンドには必要権限レベル(<span class="lv">0</span>〜<span class="lv">5</span>)が設定されており、
+      実行にはそのレベル以上の権限が必要です。
+      ユーザーの権限は <code>/permission change</code> で変更でき、必要レベル自体も
+      <a href="config.html">.config</a> の <code>commands_level</code> で調整できます。
+      初期状態では Discord サーバーの管理者権限を持つユーザーが最高権限として扱われます。
+    </p>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <a href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">sleeping-mikan/server-bot-v3</a>
+</footer>
+
+</body>
+</html>

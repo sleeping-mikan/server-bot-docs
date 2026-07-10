@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>導入ガイド | server-bot ドキュメント</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍊</text></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="index.html">🍊 server-bot <span>docs</span></a>
+    <a class="gh-link" href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="group-title">はじめに</div>
+    <a href="index.html">ホーム</a>
+    <div class="group-title">ガイド</div>
+    <a href="setup.html" class="active">導入ガイド</a>
+    <a href="web.html">Web コンソール</a>
+    <a href="extensions.html">拡張機能</a>
+    <div class="group-title">リファレンス</div>
+    <a href="commands.html">コマンド一覧</a>
+    <a href="config.html">.config リファレンス</a>
+  </nav>
+
+  <main>
+    <h1>導入ガイド</h1>
+    <p class="lead">server-bot の設置から初回起動、Discord bot として動き始めるまでの手順です。</p>
+
+    <h2 id="place">1. 設置</h2>
+    <p><code>server.py</code> を任意の場所に配置します。</p>
+    <div class="note">
+      推奨ディレクトリは、実行する <code>server.[exe/jar]</code> が存在する階層です。
+      その場所が root ディレクトリとなり、一部の権限を持つ Discord ユーザーはファイル操作
+      (<code>/cmd stdin</code> 系コマンド)を行えます。
+    </div>
+    <div class="note">
+      ただし <code>server.exe</code> や <code>server.jar</code> 本体が存在する階層は、
+      ドライブ直上(Windows の場合 <code>C:\</code> 直下など)でない必要があります。
+      必ず何らかのディレクトリの中に入れてください。
+      これは初期状態では <code>../backup/</code> 内にバックアップが生成されるためです。
+    </div>
+
+    <h2 id="run">2. 実行</h2>
+    <p>依存ライブラリをインストールしてから <code>server.py</code> を実行します。</p>
+    <pre><code>pip install -r requirements.txt
+python server.py</code></pre>
+    <p>実行すると、<code>server.py</code> と同じ階層に <code>.config</code> と <code>.token</code> が生成されます。</p>
+
+    <h3>コンソール引数(任意)</h3>
+    <p>エラーが発生する場合などに利用してください。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>引数</th><th>効果</th></tr></thead>
+        <tbody>
+          <tr><td><code>-init</code></td><td><code>update.py</code> など、<code>server.py</code> からダウンロードされる一部ファイルを再度ダウンロードします。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <code>.token</code> が生成されない場合、<code>.config</code> 内の <code>server_path + server_name</code>
+      が存在していません。サーバーが存在するパスと、拡張子を含むサーバーのファイル名に修正してください。
+    </div>
+
+    <h2 id="init">3. 初期設定</h2>
+    <ol class="steps">
+      <li><code>.token</code> に Discord bot のトークンを記述する</li>
+      <li><code>.config</code> の <code>server_path</code> に <code>server.[exe/bat]</code>(jar を実行する場合は bat)へのパスを記述する</li>
+      <li>再度 <code>server.py</code> を起動する</li>
+    </ol>
+    <p>
+      このとき同時に <code>mikanassets</code> ディレクトリが生成されます。
+      これは自己アップデートや Web コンソールへのアクセスに必要なファイル群です。
+    </p>
+    <p>
+      このプログラムは <code>server.py</code> がサーバー本体を呼び出すため、
+      <code>server.[exe/jar/bat]</code> を自身で起動する必要はありません。
+      そのほかの設定項目は <a href="config.html">.config リファレンス</a> を参照してください。
+    </p>
+
+    <h2 id="java">4. Java 版サーバーの起動について</h2>
+    <p>
+      Java 版サーバーを Windows で起動する場合、以下の内容の bat ファイルを作成し、
+      <code>.config</code> の <code>server_name</code> に設定してください
+      (fabric なら <code>start.bat</code>、forge なら <code>run.bat</code> が一般的です)。
+    </p>
+    <pre><code>java -Xmx4048M -Xms1024M -Dfile.encoding=UTF-8 -jar server.jar nogui</code></pre>
+    <div class="warn">
+      <ul style="margin:0; padding-left:1.2em;">
+        <li><code>nogui</code> オプションが無い場合、現在 <code>/stop</code> 等を利用できません。</li>
+        <li><code>-Dfile.encoding=UTF-8</code> が無い場合、一部環境で特殊文字等が正常に表示されません。</li>
+        <li><code>pause</code> のようなコマンドを bat に記載しないでください。このプログラムはサーバーを制御するためのものであり、サーバー以外のコマンドを実行しないでください。</li>
+      </ul>
+    </div>
+
+    <h2 id="update">5. アップデート</h2>
+    <p>
+      <code>.config</code> の <code>update.auto</code> が <code>true</code> の場合、起動時に GitHub の最新コミットを確認して自動更新します。
+      Discord から <code>/update</code> を実行して手動で更新することもできます。
+      参照するブランチは <code>update.branch</code> で変更できます(通常は <code>main</code> のままにしてください)。
+    </p>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <a href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">sleeping-mikan/server-bot-v3</a>
+</footer>
+
+</body>
+</html>

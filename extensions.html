@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>拡張機能 | server-bot ドキュメント</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍊</text></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="index.html">🍊 server-bot <span>docs</span></a>
+    <a class="gh-link" href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="group-title">はじめに</div>
+    <a href="index.html">ホーム</a>
+    <div class="group-title">ガイド</div>
+    <a href="setup.html">導入ガイド</a>
+    <a href="web.html">Web コンソール</a>
+    <a href="extensions.html" class="active">拡張機能</a>
+    <div class="group-title">リファレンス</div>
+    <a href="commands.html">コマンド一覧</a>
+    <a href="config.html">.config リファレンス</a>
+  </nav>
+
+  <main>
+    <h1>拡張機能</h1>
+    <p class="lead">server-bot は拡張機能によって Discord コマンド等を追加できます。</p>
+
+    <h2 id="place">配置場所</h2>
+    <p><code>server.py</code> と同じディレクトリの <code>mikanassets/extension</code> に配置してください。</p>
+    <pre><code>mikanassets/
+└── extension/
+    └── 拡張機能名/
+        └── 拡張機能を実装したファイル群</code></pre>
+    <p>
+      拡張機能の実装仕様は
+      <a href="https://github.com/sleeping-mikan/server-bot-extensions" target="_blank" rel="noopener">server-bot-extensions</a>
+      で確認できます。
+    </p>
+
+    <h2 id="v3">v3 での API 変更点</h2>
+    <div class="warn">
+      v3 では拡張機能 API のインポート方法が変更されています。v2 向けの拡張機能はそのままでは動作しません。
+    </div>
+    <pre><code># 旧 (v2)
+from main import extension_commands_group, extension_logger
+
+# 新 (v3)
+from core.state import ctx
+# ctx.extension_commands_group, ctx.extension_logger を使用する</code></pre>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <a href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener">sleeping-mikan/server-bot-v3</a>
+</footer>
+
+</body>
+</html>
