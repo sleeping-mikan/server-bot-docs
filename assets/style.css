@@ -1,23 +1,23 @@
 /* server-bot docs — オレンジ基調(ライトモード)の共通スタイル */
 
 :root {
-  --orange-50:  #fff7ed;
-  --orange-100: #ffedd5;
-  --orange-200: #fed7aa;
-  --orange-300: #fdba74;
-  --orange-500: #f97316;
-  --orange-600: #ea580c;
-  --orange-700: #c2410c;
-  --orange-800: #9a3412;
+  --orange-50:  #faf3ea;
+  --orange-100: #f6e7d4;
+  --orange-200: #eed3b4;
+  --orange-300: #e5b183;
+  --orange-500: #e98a4a;
+  --orange-600: #d97535;
+  --orange-700: #b05a24;
+  --orange-800: #8a4a20;
 
-  --bg: #fffdf9;
-  --bg-panel: #ffffff;
-  --bg-code: #fff3e6;
-  --text: #2d2a26;
-  --text-sub: #6b6357;
-  --border: #f0e2d0;
+  --bg: #f7f4ef;
+  --bg-panel: #fdfbf8;
+  --bg-code: #f3ede4;
+  --text: #3a352f;
+  --text-sub: #6f675c;
+  --border: #e7dccc;
   --link: var(--orange-700);
-  --shadow: 0 1px 3px rgba(154, 52, 18, 0.08);
+  --shadow: 0 1px 3px rgba(138, 74, 32, 0.07);
 }
 
 * { box-sizing: border-box; }
@@ -105,8 +105,6 @@ body {
   position: sticky;
   top: 4.2rem;
   align-self: flex-start;
-  max-height: calc(100vh - 5rem);
-  overflow-y: auto;
   font-size: 0.92rem;
 }
 .sidebar .group-title {
@@ -203,7 +201,7 @@ pre code { background: none; border: none; padding: 0; }
 .note::before {
   content: "NOTE";
   color: var(--orange-700);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c2410c' d='M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23b05a24' d='M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z'/%3E%3C/svg%3E");
 }
 /* mdi-alert-outline */
 .warn::before {
@@ -221,8 +219,9 @@ table {
   background: var(--bg-panel);
 }
 th {
-  background: var(--orange-500);
-  color: #fff;
+  background: var(--orange-100);
+  color: var(--orange-800);
+  border-bottom: 2px solid var(--orange-300);
   text-align: left;
   padding: 0.55rem 0.8rem;
   white-space: nowrap;

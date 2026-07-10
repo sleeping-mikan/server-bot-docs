@@ -134,15 +134,15 @@ async def heartbeat():
 append_task(heartbeat)</code></pre>
 
     <h2 id="server">サーバーを操作する</h2>
-    <p>管理対象のサーバープロセスに対する操作用の API が <code>bot.extensions</code> にあります。</p>
-    <pre><code>from bot.extensions import write_server_in, get_process
+    <p>
+      管理対象のサーバープロセスに対する操作用の API が <code>bot.extensions</code> にあります。
+      これらは bot 本体の内部状態と競合しないよう調整されているため、サーバーへの操作には必ずこの API を経由してください。
+    </p>
+    <pre><code>from bot.extensions import write_server_in
 
 # サーバーの標準入力にコマンドを送る
 ok, reason = write_server_in("say hello")
-# ok=False のとき reason は "server_is_not_running" などの失敗理由
-
-# 生の Popen オブジェクトが必要な場合
-proc = get_process()</code></pre>
+# ok=False のとき reason は "server_is_not_running" などの失敗理由</code></pre>
 
     <h2 id="api">利用できる主な API</h2>
     <div class="table-wrap">
@@ -152,8 +152,7 @@ proc = get_process()</code></pre>
           <tr><td rowspan="3"><code>core.state</code></td><td><code>ctx.extension_commands_group</code></td><td>この拡張機能用のコマンドグループ(ロード時のみ。モジュール先頭で変数に保持する)。</td></tr>
           <tr><td><code>ctx.extension_logger</code></td><td>この拡張機能用のロガー(同上)。<code>logger.getChild("名前")</code> で子ロガーも作れます。</td></tr>
           <tr><td><code>ctx.server_path</code> / <code>ctx.server_name</code> / <code>ctx.paths</code> など</td><td>サーバーのパス・名前・bot の各種パスなどの共有状態。</td></tr>
-          <tr><td rowspan="3"><code>bot.extensions</code></td><td><code>get_process()</code></td><td>サーバーの生の <code>Popen</code> オブジェクトを返します。</td></tr>
-          <tr><td><code>append_task(func)</code></td><td><code>on_ready</code> 後に <code>start()</code> される <code>discord.ext.tasks</code> ループを登録します。</td></tr>
+          <tr><td rowspan="2"><code>bot.extensions</code></td><td><code>append_task(func)</code></td><td><code>on_ready</code> 後に <code>start()</code> される <code>discord.ext.tasks</code> ループを登録します。</td></tr>
           <tr><td><code>write_server_in(command)</code></td><td>サーバーの標準入力にコマンドを書き込みます。<code>(成功したか, 理由)</code> のタプルを返します。</td></tr>
           <tr><td rowspan="3"><code>bot.utils</code></td><td><code>print_user(logger, user)</code></td><td>コマンド利用者をログに残します(<code>await</code> が必要)。</td></tr>
           <tr><td><code>user_permission(user)</code></td><td>ユーザーの権限レベルを返します(<code>await</code> が必要)。</td></tr>
