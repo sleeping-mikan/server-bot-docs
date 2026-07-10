@@ -124,9 +124,17 @@
 python server.py</code></pre>
     <p>
       初回実行では、<code>server.py</code> と同じフォルダに設定ファイル <code>.config</code> と <code>.token</code> が生成され、
-      「please write token in ...」と表示されて一度終了します。<strong>これは正常な動作です。</strong>
-      続けて「3. 初期設定」に進んでください。
+      「please write token in ...」に続いて「please press any key to continue...」と表示されて停止します。
+      <strong>これは正常な動作です。</strong>
+      何かキーを押すとプログラムが終了するので、続けて「3. 初期設定」に進んでください。
     </p>
+    <div class="note">
+      このとき「not exist ○○ file. please check your config.」というエラー
+      (○○ は <code>bedrock_server.exe</code> のパス)が同時に表示されることがあります。
+      これは <code>server_name</code> の初期値が <code>bedrock_server.exe</code>(Minecraft 統合版)のためで、
+      別のサーバーを使う場合はこの時点で表示されるのが正常です。
+      「3. 初期設定」で <code>server_name</code> を書き換えると表示されなくなります。
+    </div>
 
     <div class="note">
       プログラム本体は <code>mikanassets/main/</code> に配置されます。
@@ -205,6 +213,11 @@ python server.py</code></pre>
 
     <h2 id="trouble">つまずきやすいポイント</h2>
     <p>起動時によくあるエラーメッセージと対処方法です。</p>
+    <div class="note">
+      起動時のエラーで停止した場合は「please press any key to continue...」と表示され、キー入力待ちになります。
+      何かキーを押すとプログラムが終了するので、下表の対処を行ってから再実行してください
+      (ウィンドウを閉じて終了しても問題ありません)。
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>症状 / 表示されるメッセージ</th><th>原因と対処</th></tr></thead>
