@@ -12,6 +12,9 @@ GitHub Pages で公開されます: https://sleeping-mikan.github.io/server-bot-
 - `config.html` — .config リファレンス(検索フィルタ付き)
 - `web.html` — Web コンソール
 - `extensions.html` — 拡張機能
-- `assets/style.css` — 共通スタイル(オレンジ基調・ダークモード対応)
+- `assets/style.css` — 共通スタイル(オレンジ基調・ライトモード)
+- `assets/icon.png` — サイトアイコン(mi-2026)
+
+アイコンは [Material Design Icons](https://pictogrammers.com/library/mdi/) の SVG パスをインライン埋め込みで使用しています。
 
 ビルド不要の静的サイトです。ファイルを編集して push すれば反映されます。
