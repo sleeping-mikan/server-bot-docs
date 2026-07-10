@@ -48,10 +48,15 @@
       https を用いて運用する場合は、リバースプロキシ(nginx、Cloudflare Tunnel など)を利用してください。
     </p>
 
-    <h2 id="config">関連する設定</h2>
+    <h2 id="config">.config の関連設定</h2>
+    <p>
+      Web コンソールに関する設定は、<code>server.py</code> と同じ階層に生成される設定ファイル
+      <a href="config.html"><code>.config</code></a> の <code>web</code> キー以下にあります。
+      変更後は <code>server.py</code> の再起動が必要です。
+    </p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>項目</th><th>説明</th></tr></thead>
+        <thead><tr><th>.config の項目</th><th>説明</th></tr></thead>
         <tbody>
           <tr><td><code>web.port</code></td><td>web サーバーのポート番号。</td></tr>
           <tr><td><code>web.secret_key</code></td><td>Flask のセッション鍵。十分に強固な文字列を設定してください。</td></tr>
