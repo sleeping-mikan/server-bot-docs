@@ -133,30 +133,104 @@ async def heartbeat():
 
 append_task(heartbeat)</code></pre>
 
-    <h2 id="server">サーバーを操作する</h2>
+    <h2 id="api">API リファレンス</h2>
     <p>
-      管理対象のサーバープロセスに対する操作用の API が <code>bot.extensions</code> にあります。
-      これらは bot 本体の内部状態と競合しないよう調整されているため、サーバーへの操作には必ずこの API を経由してください。
+      拡張機能から利用できる関数の詳細です。
+      bot 本体のモジュールは技術的にはどれでも import できてしまいますが、
+      ここに載せている API は「外部から呼んでも bot 内部の状態を壊さない」ように作られている入口です。
+      特にサーバープロセスへの操作は、必ずこれらの API を経由してください
+      (たとえば <code>Popen</code> の標準入力へ直接書き込むと、bot 本体のコマンド処理と書き込みが
+      割り込み合い、サーバーに壊れたコマンドが届くことがあります)。
     </p>
-    <pre><code>from bot.extensions import write_server_in
 
-# サーバーの標準入力にコマンドを送る
-ok, reason = write_server_in("say hello")
-# ok=False のとき reason は "server_is_not_running" などの失敗理由</code></pre>
-
-    <h2 id="api">利用できる主な API</h2>
+    <h3 id="api-write-server-in"><code>bot.extensions.write_server_in(command)</code></h3>
+    <pre><code>write_server_in(command: str) -&gt; tuple[bool, str]</code></pre>
+    <p>
+      管理対象サーバーの標準入力(コンソール)に <code>command</code> を 1 行のコマンドとして書き込みます。
+      改行は自動で付加されるため、<code>command</code> に含める必要はありません。
+      内部の書き込みロックを取得してから書き込むため、bot 本体の <code>/cmd serverin</code> や
+      他の拡張機能からの書き込みと競合しません。
+    </p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>import 元</th><th>名前</th><th>説明</th></tr></thead>
+        <thead><tr><th>戻り値</th><th>意味</th></tr></thead>
         <tbody>
-          <tr><td rowspan="3"><code>core.state</code></td><td><code>ctx.extension_commands_group</code></td><td>この拡張機能用のコマンドグループ(ロード時のみ。モジュール先頭で変数に保持する)。</td></tr>
-          <tr><td><code>ctx.extension_logger</code></td><td>この拡張機能用のロガー(同上)。<code>logger.getChild("名前")</code> で子ロガーも作れます。</td></tr>
-          <tr><td><code>ctx.server_path</code> / <code>ctx.server_name</code> / <code>ctx.paths</code> など</td><td>サーバーのパス・名前・bot の各種パスなどの共有状態。</td></tr>
-          <tr><td rowspan="2"><code>bot.extensions</code></td><td><code>append_task(func)</code></td><td><code>on_ready</code> 後に <code>start()</code> される <code>discord.ext.tasks</code> ループを登録します。</td></tr>
-          <tr><td><code>write_server_in(command)</code></td><td>サーバーの標準入力にコマンドを書き込みます。<code>(成功したか, 理由)</code> のタプルを返します。</td></tr>
-          <tr><td rowspan="3"><code>bot.utils</code></td><td><code>print_user(logger, user)</code></td><td>コマンド利用者をログに残します(<code>await</code> が必要)。</td></tr>
-          <tr><td><code>user_permission(user)</code></td><td>ユーザーの権限レベルを返します(<code>await</code> が必要)。</td></tr>
-          <tr><td><code>not_enough_permission(interaction, logger)</code></td><td>権限不足の定型応答を送信します(<code>await</code> が必要)。</td></tr>
+          <tr><td><code>(True, "success")</code></td><td>書き込みに成功しました。</td></tr>
+          <tr><td><code>(False, "server_is_not_running")</code></td><td>サーバーが起動していません。</td></tr>
+          <tr><td><code>(False, "write_server_block")</code></td><td>他の書き込み処理が実行中です。少し待ってから再試行してください。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      戻り値の <code>bool</code> を必ず確認してください。サーバー停止中に送ったコマンドは失敗し、送信されません。
+    </div>
+
+    <h3 id="api-append-task"><code>bot.extensions.append_task(func)</code></h3>
+    <pre><code>append_task(func: discord.ext.tasks.Loop) -&gt; None</code></pre>
+    <p>
+      <code>@tasks.loop(...)</code> で作った定期実行ループを bot に登録します。
+      登録されたループは bot の <code>on_ready</code>(Discord への接続完了)後に自動で <code>start()</code> され、
+      <code>/exit</code> や <code>/restart</code>、アップデートによる終了時には自動で <code>cancel()</code> されます。
+      起動・停止のタイミングを bot 側が管理するため、自分で <code>start()</code> / <code>cancel()</code> を呼ぶ必要はありません。
+    </p>
+    <div class="note">
+      登録は <code>commands.py</code> の読み込み時(モジュール先頭)に行ってください。
+      bot の起動完了後に登録してもループは開始されません。
+    </div>
+
+    <h3 id="api-print-user"><code>bot.utils.print_user(logger, user)</code></h3>
+    <pre><code>async print_user(logger: logging.Logger, user: discord.User) -&gt; None</code></pre>
+    <p>
+      「誰がコマンドを実行したか」を <code>command used by ユーザー名</code> という形式で
+      <code>logger</code> に INFO として記録します。bot 本体の全コマンドがこの形式でログを残しているため、
+      拡張機能のコマンドでも先頭で呼んでおくと、ログの形式がそろい追跡しやすくなります。
+      <code>await</code> が必要です。
+    </p>
+
+    <h3 id="api-user-permission"><code>bot.utils.user_permission(user)</code></h3>
+    <pre><code>async user_permission(user: discord.User) -&gt; int</code></pre>
+    <p>
+      ユーザーの権限レベルを整数で返します。<code>await</code> が必要です。判定の仕組みは bot 本体のコマンドと同じです:
+    </p>
+    <ul>
+      <li><code>.config</code> の <code>admin.use_discord_admin</code> が <code>true</code>(初期値)の場合、
+        Discord サーバーの管理者権限を持つユーザーには最大の権限レベルが返ります</li>
+      <li>それ以外は <code>/permission change</code> で設定された権限テーブルの値が返ります(未登録ユーザーは 0)</li>
+    </ul>
+    <p>
+      「レベル 2 以上のみ実行可」のようにしたい場合は、
+      <a href="#permission">権限チェックとユーザーログ</a>のコード例のように比較してください。
+    </p>
+
+    <h3 id="api-not-enough-permission"><code>bot.utils.not_enough_permission(interaction, logger)</code></h3>
+    <pre><code>async not_enough_permission(interaction: discord.Interaction, logger: logging.Logger) -&gt; None</code></pre>
+    <p>
+      権限不足時の定型応答を返します。bot 本体と同じ「権限がありません」のエラー embed を、
+      実行した本人にだけ見えるメッセージ(ephemeral)として送信し、<code>logger</code> にエラーを記録します。
+      <code>await</code> が必要です。
+    </p>
+    <div class="note">
+      この関数は <code>interaction</code> への応答を消費します。
+      呼んだ後に同じ <code>interaction</code> へ <code>response.send_message()</code> することはできないため、
+      権限チェックは応答を返す前(ハンドラの先頭)で行い、呼んだら <code>return</code> してください。
+    </div>
+
+    <h3 id="api-ctx"><code>core.state.ctx</code>(共有状態・読み取り用)</h3>
+    <pre><code>from core.state import ctx</code></pre>
+    <p>
+      bot 全体の共有状態です。拡張機能からは<strong>読み取り専用</strong>として扱ってください。
+      値を書き換えると bot 本体の動作に直接影響します。
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>属性</th><th>型</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td><code>ctx.extension_commands_group</code></td><td><code>app_commands.Group</code></td><td>この拡張機能用のコマンドグループ。<strong>ロード時のみ</strong>セットされ、ロード完了後はクリアされるため、モジュール先頭で変数に保持してください。</td></tr>
+          <tr><td><code>ctx.extension_logger</code></td><td><code>logging.Logger</code></td><td>この拡張機能用のロガー(同上)。<code>logger.getChild("名前")</code> で子ロガーも作れます。</td></tr>
+          <tr><td><code>ctx.server_path</code></td><td><code>pathlib.Path</code></td><td>管理対象サーバーが存在するフォルダのパス。</td></tr>
+          <tr><td><code>ctx.server_name</code></td><td><code>str</code></td><td>サーバー本体のファイル名(<code>.config</code> の <code>server_name</code>)。</td></tr>
+          <tr><td><code>ctx.paths.base</code></td><td><code>pathlib.Path</code></td><td>bot(<code>server.py</code>)が設置されているフォルダのパス。</td></tr>
+          <tr><td><code>ctx.text.lang</code></td><td><code>str</code></td><td>現在の表示言語(<code>"ja"</code> / <code>"en"</code>)。</td></tr>
         </tbody>
       </table>
     </div>
