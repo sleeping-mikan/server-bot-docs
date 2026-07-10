@@ -84,26 +84,25 @@ python server.py</code></pre>
       そのほかの設定項目は <a href="config.html">.config リファレンス</a> を参照してください。
     </p>
 
-    <h2 id="java">4. Java 版サーバーの起動について</h2>
-    <p>
-      Java 版サーバーを Windows で起動する場合、以下の内容の bat ファイルを作成し、
-      <code>.config</code> の <code>server_name</code> に設定してください
-      (fabric なら <code>start.bat</code>、forge なら <code>run.bat</code> が一般的です)。
-    </p>
-    <pre><code>java -Xmx4048M -Xms1024M -Dfile.encoding=UTF-8 -jar server.jar nogui</code></pre>
-    <div class="warn">
-      <ul style="margin:0; padding-left:1.2em;">
-        <li><code>nogui</code> オプションが無い場合、現在 <code>/stop</code> 等を利用できません。</li>
-        <li><code>-Dfile.encoding=UTF-8</code> が無い場合、一部環境で特殊文字等が正常に表示されません。</li>
-        <li><code>pause</code> のようなコマンドを bat に記載しないでください。このプログラムはサーバーを制御するためのものであり、サーバー以外のコマンドを実行しないでください。</li>
-      </ul>
-    </div>
-
-    <h2 id="update">5. アップデート</h2>
+    <h2 id="update">4. アップデート</h2>
     <p>
       <code>.config</code> の <code>update.auto</code> が <code>true</code> の場合、起動時に GitHub の最新コミットを確認して自動更新します。
       Discord から <code>/update</code> を実行して手動で更新することもできます。
       参照するブランチは <code>update.branch</code> で変更できます(通常は <code>main</code> のままにしてください)。
+    </p>
+
+    <h3 id="java">補足: Java 版 Minecraft サーバー(server.jar)を起動する場合</h3>
+    <p class="tips">
+      この bot は Minecraft 専用ツールではありませんが、Java 版サーバーを Windows で動かす場合は
+      以下の内容の bat ファイルを作成し、<code>.config</code> の <code>server_name</code> に設定してください
+      (fabric なら <code>start.bat</code>、forge なら <code>run.bat</code> が一般的です)。
+    </p>
+    <pre><code>java -Xmx4048M -Xms1024M -Dfile.encoding=UTF-8 -jar server.jar nogui</code></pre>
+    <p class="tips">
+      <code>nogui</code> が無いと <code>/stop</code> 等を利用できません。
+      <code>-Dfile.encoding=UTF-8</code> が無いと一部環境で特殊文字等が正常に表示されません。
+      また <code>pause</code> のようなコマンドを bat に記載しないでください
+      (このプログラムはサーバーを制御するためのものであり、サーバー以外のコマンドを実行しないでください)。
     </p>
   </main>
 </div>
