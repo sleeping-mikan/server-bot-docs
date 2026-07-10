@@ -31,30 +31,146 @@
 
   <main>
     <h1>拡張機能</h1>
-    <p class="lead">server-bot は拡張機能によって Discord コマンド等を追加できます。</p>
+    <p class="lead">
+      server-bot は拡張機能によって独自の Discord コマンドや定期タスクを追加できます。
+      このページでは v3 における拡張機能の実装方法を説明します。
+    </p>
 
     <h2 id="place">配置場所</h2>
-    <p><code>server.py</code> と同じディレクトリの <code>mikanassets/extension</code> に配置してください。</p>
+    <p>
+      <code>server.py</code> と同じディレクトリの <code>mikanassets/extension/</code> 以下に、
+      拡張機能ごとのディレクトリを作って配置します。
+      <strong>ディレクトリ直下の <code>commands.py</code> がエントリポイント</strong>として読み込まれます。
+    </p>
     <pre><code>mikanassets/
 └── extension/
     └── 拡張機能名/
-        └── 拡張機能を実装したファイル群</code></pre>
+        ├── commands.py   ← エントリポイント(必須)
+        └── その他のファイル(任意)</code></pre>
     <p>
-      拡張機能の実装仕様は
-      <a href="https://github.com/sleeping-mikan/server-bot-extensions" target="_blank" rel="noopener">server-bot-extensions</a>
-      で確認できます。
+      拡張機能は <code>server.py</code> の起動時に読み込まれます。
+      追加・変更した場合は <code>server.py</code> を再起動してください。
+      <code>commands.py</code> が存在しないディレクトリや、読み込み中に例外が発生した拡張機能は
+      スキップされ、ログにその旨が出力されます(bot 本体は起動を継続します)。
+    </p>
+    <div class="warn">
+      拡張機能は bot 本体と同じ権限で動く Python コードです。
+      配布されている拡張機能を導入する場合は、内容を理解した上で自己責任で使用してください。
+    </div>
+
+    <h2 id="basic">コマンドを追加する</h2>
+    <p>
+      bot は拡張機能を読み込む直前に、その拡張機能専用のコマンドグループ
+      <code>/extension-拡張機能名</code> を作成し、<code>ctx.extension_commands_group</code> にセットします。
+      <code>commands.py</code> ではこれを受け取ってコマンドを登録します。
+    </p>
+    <p>最小構成の例(<code>mikanassets/extension/template/commands.py</code>):</p>
+    <pre><code>import discord
+
+from core.state import ctx
+
+# ロード時にセットされる値は、必ず import 時点(モジュール先頭)で変数に保持する
+tree   = ctx.extension_commands_group
+logger = ctx.extension_logger
+
+# /extension-template hello として登録される
+@tree.command(name="hello", description="Say hello")
+async def hello_command(interaction: discord.Interaction):
+    await interaction.response.send_message("Hello, world!")
+    logger.info("hello sent")</code></pre>
+    <div class="note">
+      <code>ctx.extension_commands_group</code> と <code>ctx.extension_logger</code> は
+      「いま読み込んでいる拡張機能」のために一時的にセットされる値で、全拡張機能のロード完了後にはクリアされます。
+      関数の中から <code>ctx.extension_commands_group</code> を直接参照せず、
+      上の例のようにモジュール先頭で変数に受けてください。
+    </div>
+    <p>
+      コマンドグループの名前は拡張機能のディレクトリ名から自動で決まります。
+      ディレクトリ名が <code>template</code> なら、コマンドは Discord 上で
+      <code>/extension-template hello</code> のように表示されます。
     </p>
 
-    <h2 id="v3">v3 での API 変更点</h2>
-    <div class="warn">
-      v3 では拡張機能 API のインポート方法が変更されています。v2 向けの拡張機能はそのままでは動作しません。
+    <h3 id="subgroup">サブコマンドグループ</h3>
+    <p><code>discord.app_commands.Group</code> を作って <code>tree</code> に登録すると、さらに階層を作れます。</p>
+    <pre><code># /extension-template group say &lt;message&gt; として登録される
+my_group = discord.app_commands.Group(name="group", description="A group of commands")
+
+@my_group.command(name="say", description="Say something")
+async def say_command(interaction: discord.Interaction, message: str):
+    await interaction.response.send_message(message)
+
+tree.add_command(my_group)</code></pre>
+
+    <h3 id="permission">権限チェックとユーザーログ</h3>
+    <p>bot 本体と同じ権限システム・ログ形式を利用できます。</p>
+    <pre><code>from bot.utils import print_user, user_permission, not_enough_permission
+
+@tree.command(name="secret", description="Level 2 or higher only")
+async def secret_command(interaction: discord.Interaction):
+    await print_user(logger, interaction.user)      # 利用者をログに残す
+    if await user_permission(interaction.user) &lt; 2: # 権限レベルを確認
+        await not_enough_permission(interaction, logger)
+        return
+    await interaction.response.send_message("ok")</code></pre>
+
+    <h2 id="tasks">定期タスクを追加する</h2>
+    <p>
+      <code>discord.ext.tasks</code> のループを <code>append_task()</code> で登録すると、
+      bot の <code>on_ready</code> 後に自動で <code>start()</code> されます。
+    </p>
+    <pre><code>from discord.ext import tasks
+
+from bot.extensions import append_task
+
+@tasks.loop(seconds=60)
+async def heartbeat():
+    logger.info("alive")
+
+append_task(heartbeat)</code></pre>
+
+    <h2 id="server">サーバーを操作する</h2>
+    <p>管理対象のサーバープロセスに対する操作用の API が <code>bot.extensions</code> にあります。</p>
+    <pre><code>from bot.extensions import write_server_in, get_process
+
+# サーバーの標準入力にコマンドを送る
+ok, reason = write_server_in("say hello")
+# ok=False のとき reason は "server_is_not_running" などの失敗理由
+
+# 生の Popen オブジェクトが必要な場合
+proc = get_process()</code></pre>
+
+    <h2 id="api">利用できる主な API</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>import 元</th><th>名前</th><th>説明</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><code>core.state</code></td><td><code>ctx.extension_commands_group</code></td><td>この拡張機能用のコマンドグループ(ロード時のみ。モジュール先頭で変数に保持する)。</td></tr>
+          <tr><td><code>ctx.extension_logger</code></td><td>この拡張機能用のロガー(同上)。<code>logger.getChild("名前")</code> で子ロガーも作れます。</td></tr>
+          <tr><td><code>ctx.server_path</code> / <code>ctx.server_name</code> / <code>ctx.paths</code> など</td><td>サーバーのパス・名前・bot の各種パスなどの共有状態。</td></tr>
+          <tr><td rowspan="3"><code>bot.extensions</code></td><td><code>get_process()</code></td><td>サーバーの生の <code>Popen</code> オブジェクトを返します。</td></tr>
+          <tr><td><code>append_task(func)</code></td><td><code>on_ready</code> 後に <code>start()</code> される <code>discord.ext.tasks</code> ループを登録します。</td></tr>
+          <tr><td><code>write_server_in(command)</code></td><td>サーバーの標準入力にコマンドを書き込みます。<code>(成功したか, 理由)</code> のタプルを返します。</td></tr>
+          <tr><td rowspan="3"><code>bot.utils</code></td><td><code>print_user(logger, user)</code></td><td>コマンド利用者をログに残します(<code>await</code> が必要)。</td></tr>
+          <tr><td><code>user_permission(user)</code></td><td>ユーザーの権限レベルを返します(<code>await</code> が必要)。</td></tr>
+          <tr><td><code>not_enough_permission(interaction, logger)</code></td><td>権限不足の定型応答を送信します(<code>await</code> が必要)。</td></tr>
+        </tbody>
+      </table>
     </div>
+
+    <h2 id="v2">v2 からの移行</h2>
+    <p>
+      v2 では <code>from __main__ import extension_commands_group</code> のように
+      <code>__main__</code> からインポートしていましたが、v3 では <code>core.state</code> の
+      <code>ctx</code> 経由に変更されています。v2 向けの拡張機能はそのままでは動作しません。
+    </p>
     <pre><code># 旧 (v2)
-from main import extension_commands_group, extension_logger
+from __main__ import extension_commands_group as tree
+from __main__ import extension_logger
 
 # 新 (v3)
 from core.state import ctx
-# ctx.extension_commands_group, ctx.extension_logger を使用する</code></pre>
+tree   = ctx.extension_commands_group
+logger = ctx.extension_logger</code></pre>
   </main>
 </div>
 
