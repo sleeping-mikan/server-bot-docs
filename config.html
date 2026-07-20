@@ -11,7 +11,7 @@
 
 <header class="site-header">
   <div class="inner">
-    <a class="logo" href="index.html"><img src="assets/icon.png" alt="">server-bot <span>docs</span></a>
+    <a class="logo" href="index.html"><span class="logo-mark"><img src="assets/icon.png" alt=""></span>server-bot <span>docs</span><span class="ver">v3</span></a>
     <a class="gh-link" href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener"><svg class="mdi" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"/></svg>GitHub</a>
   </div>
 </header>
@@ -57,6 +57,7 @@
       <svg class="mdi" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/></svg>
       <input class="filter-box" id="filter" type="search"
              placeholder="設定項目名や説明で絞り込み(例: port, 権限, backup)" autocomplete="off">
+      <kbd class="key-hint">/</kbd>
     </div>
     <p class="filter-count" id="filter-count"></p>
 
@@ -77,20 +78,20 @@
           <tr><td><code>web.secret_key</code></td><td>Flask で利用する鍵(<code>app.secret_key</code>)。十分に強固な文字列を設定してください。</td></tr>
           <tr><td><code>web.port</code></td><td>web サーバーのポート番号。<code>/cmd stdin send-discord</code> でもこのポート番号を利用します。</td></tr>
           <tr><td><code>web.use_front_page</code></td><td>web ページからの操作を許可するか否か。<code>false</code> の場合でもファイルダウンロードはできます。</td></tr>
-          <tr><td><code>discord_commands.permission.commands_level</code></td><td>すべてのコマンドについて必要権限レベルを定義するリスト。コマンド実行には書き込まれた値以上の権限が必要です。</td></tr>
-          <tr><td><code>discord_commands.ip.address.prefix</code></td><td><code>/ip</code> で表示するアドレスの前に付加する文字列。</td></tr>
-          <tr><td><code>discord_commands.ip.address.suffix</code></td><td><code>/ip</code> で表示するアドレスの後に付加する文字列。</td></tr>
-          <tr><td><code>discord_commands.ip.address.body</code></td><td><code>null</code> の場合は外部 IP を自動取得して表示します。文字列を設定するとその値を固定で表示します(自動取得しない)。</td></tr>
-          <tr><td><code>discord_commands.cmd.stdin.sys_files</code></td><td><code>/cmd stdin &lt;mk/rm/rmdir/wget/mv&gt;</code> において、権限を持っていても操作を拒否するファイルのリスト。</td></tr>
-          <tr><td><code>discord_commands.cmd.stdin.send_discord.bits_capacity</code></td><td><code>/cmd stdin send-discord</code> において送信を許可するファイルの最大容量。</td></tr>
-          <tr><td><code>discord_commands.cmd.serverin.allow_cmd</code></td><td><code>/cmd</code> で標準入力への送信を許可するコマンド名のリスト。</td></tr>
-          <tr><td><code>discord_commands.terminal.discord</code></td><td>コンソールとして扱うチャンネル ID。通常 config を直接操作しませんが、指定されたチャンネルではサーバー起動中の入出力が可能になります(<code>allow_cmd</code> で許可された命令のみ)。</td></tr>
-          <tr><td><code>discord_commands.terminal.capacity</code></td><td>Discord にコンソール出力する文字列長の最大値。デフォルトでは送信に時間がかかってもデータを捨てません。</td></tr>
-          <tr><td><code>discord_commands.stop.submit</code></td><td><code>/stop</code> コマンドが入力された際にサーバーの標準入力へ送信するコマンド。</td></tr>
-          <tr><td><code>discord_commands.backup.path</code></td><td>ワールドデータのバックアップパス。例えば <code>D:\server\backup</code> に保存するなら <code>D:\\server\\backup\\</code> または <code>D:/server/backup/</code>。</td></tr>
-          <tr><td><code>discord_commands.admin.members</code></td><td>bot 管理者の権限テーブル。通常は config を直接操作せず、<code>/permission change</code> コマンドで設定します。</td></tr>
-          <tr><td><code>discord_commands.admin.use_discord_admin</code></td><td><code>true</code> の場合、Discord サーバーの管理者権限を持つユーザーを bot の最高権限レベルとして扱います。<code>false</code> にすると Discord 管理者権限を無視し、<code>members</code> テーブルのみで権限を判定します。</td></tr>
-          <tr><td><code>discord_commands.lang</code></td><td>Discord に送信するメッセージの言語(<code>en</code> : 英語, <code>ja</code> : 日本語)。</td></tr>
+          <tr><td><code>discord_commands.<wbr>permission.<wbr>commands_level</code></td><td>すべてのコマンドについて必要権限レベルを定義するリスト。コマンド実行には書き込まれた値以上の権限が必要です。</td></tr>
+          <tr><td><code>discord_commands.<wbr>ip.<wbr>address.<wbr>prefix</code></td><td><code>/ip</code> で表示するアドレスの前に付加する文字列。</td></tr>
+          <tr><td><code>discord_commands.<wbr>ip.<wbr>address.<wbr>suffix</code></td><td><code>/ip</code> で表示するアドレスの後に付加する文字列。</td></tr>
+          <tr><td><code>discord_commands.<wbr>ip.<wbr>address.<wbr>body</code></td><td><code>null</code> の場合は外部 IP を自動取得して表示します。文字列を設定するとその値を固定で表示します(自動取得しない)。</td></tr>
+          <tr><td><code>discord_commands.<wbr>cmd.<wbr>stdin.<wbr>sys_files</code></td><td><code>/cmd stdin &lt;mk/rm/rmdir/wget/mv&gt;</code> において、権限を持っていても操作を拒否するファイルのリスト。</td></tr>
+          <tr><td><code>discord_commands.<wbr>cmd.<wbr>stdin.<wbr>send_discord.<wbr>bits_capacity</code></td><td><code>/cmd stdin send-discord</code> において送信を許可するファイルの最大容量。</td></tr>
+          <tr><td><code>discord_commands.<wbr>cmd.<wbr>serverin.<wbr>allow_cmd</code></td><td><code>/cmd</code> で標準入力への送信を許可するコマンド名のリスト。</td></tr>
+          <tr><td><code>discord_commands.<wbr>terminal.<wbr>discord</code></td><td>コンソールとして扱うチャンネル ID。通常 config を直接操作しませんが、指定されたチャンネルではサーバー起動中の入出力が可能になります(<code>allow_cmd</code> で許可された命令のみ)。</td></tr>
+          <tr><td><code>discord_commands.<wbr>terminal.<wbr>capacity</code></td><td>Discord にコンソール出力する文字列長の最大値。デフォルトでは送信に時間がかかってもデータを捨てません。</td></tr>
+          <tr><td><code>discord_commands.<wbr>stop.<wbr>submit</code></td><td><code>/stop</code> コマンドが入力された際にサーバーの標準入力へ送信するコマンド。</td></tr>
+          <tr><td><code>discord_commands.<wbr>backup.<wbr>path</code></td><td>ワールドデータのバックアップパス。例えば <code>D:\server\backup</code> に保存するなら <code>D:\\server\\backup\\</code> または <code>D:/server/backup/</code>。</td></tr>
+          <tr><td><code>discord_commands.<wbr>admin.<wbr>members</code></td><td>bot 管理者の権限テーブル。通常は config を直接操作せず、<code>/permission change</code> コマンドで設定します。</td></tr>
+          <tr><td><code>discord_commands.<wbr>admin.<wbr>use_discord_admin</code></td><td><code>true</code> の場合、Discord サーバーの管理者権限を持つユーザーを bot の最高権限レベルとして扱います。<code>false</code> にすると Discord 管理者権限を無視し、<code>members</code> テーブルのみで権限を判定します。</td></tr>
+          <tr><td><code>discord_commands.<wbr>lang</code></td><td>Discord に送信するメッセージの言語(<code>en</code> : 英語, <code>ja</code> : 日本語)。</td></tr>
           <tr><td><code>enable_advanced_features</code></td><td>Discord 上で管理者権限を持っている場合に <code>sys_files</code> に含まれるファイルを操作可能にするか否か。<code>false</code> の場合はエントリファイル(通常 <code>server.py</code>。名前変更されていても検出されます)に対する <code>/cmd stdin &lt;mk/rm/mv/wget&gt;</code> 操作が権限に関わらず常に拒否されます。</td></tr>
         </tbody>
       </table>
@@ -98,12 +99,14 @@
 
     <h2 id="default">初期生成される .config</h2>
     <div class="note">
-      <code>server_path</code> と <code>discord_commands.backup.path</code> の実際の初期値は、
+      <code>server_path</code> と <code>discord_commands.<wbr>backup.<wbr>path</code> の実際の初期値は、
       <code>server.py</code> を置いた場所に合わせて自動設定されます
       (以下の <code>path/to/...</code> はあくまで例です)。
       <code>server_name</code> の初期値は <code>bedrock_server.exe</code> のため、
       別のサーバーを使う場合は自分のサーバーのファイル名に書き換えてください。
     </div>
+    <figure class="code">
+    <figcaption>.config</figcaption>
     <pre><code>{
     "allow": {
         "ip": true
@@ -201,7 +204,19 @@
     },
     "enable_advanced_features": false
 }</code></pre>
+    </figure>
+
+    <nav class="page-nav">
+      <a class="page-nav-prev" href="commands.html"><span>前のページ</span><strong>コマンド一覧</strong></a>
+    </nav>
   </main>
+
+  <aside class="toc">
+    <div class="toc-title">このページ</div>
+    <a href="#edit">編集するときの基本</a>
+    <a href="#items">設定項目</a>
+    <a href="#default">初期生成される .config</a>
+  </aside>
 </div>
 
 <footer class="site-footer">
@@ -228,6 +243,7 @@
   update();
 })();
 </script>
+<script src="assets/site.js" defer></script>
 
 </body>
 </html>

@@ -11,7 +11,7 @@
 
 <header class="site-header">
   <div class="inner">
-    <a class="logo" href="index.html"><img src="assets/icon.png" alt="">server-bot <span>docs</span></a>
+    <a class="logo" href="index.html"><span class="logo-mark"><img src="assets/icon.png" alt=""></span>server-bot <span>docs</span><span class="ver">v3</span></a>
     <a class="gh-link" href="https://github.com/sleeping-mikan/server-bot-v3" target="_blank" rel="noopener"><svg class="mdi" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"/></svg>GitHub</a>
   </div>
 </header>
@@ -51,158 +51,201 @@
       <svg class="mdi" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/></svg>
       <input class="filter-box" id="filter" type="search"
              placeholder="コマンド名や機能で絞り込み(例: backup, ログ, ファイル)" autocomplete="off">
+      <kbd class="key-hint">/</kbd>
     </div>
     <p class="filter-count" id="filter-count"></p>
 
-    <div class="table-wrap">
-      <table id="cmd-table">
-        <thead>
-          <tr><th>コマンド</th><th>実行結果</th><th>初期権限</th></tr>
-        </thead>
-        <tbody>
-          <tr data-k="help ヘルプ 使い方">
-            <td><code>/help</code></td>
-            <td>Discord 上に help と web リンクを表示します。web サイトへ外部からアクセスするには追加のポート開放が必要です。</td>
-            <td><span class="lv">0</span></td>
-          </tr>
-          <tr data-k="ip アドレス address">
-            <td><code>/ip</code></td>
-            <td>この bot(サーバー)が実行している IP アドレスを返します。</td>
-            <td><span class="lv">0</span> ※config で有効/無効を切替</td>
-          </tr>
-          <tr data-k="start 起動 開始 サーバー">
-            <td><code>/start</code></td>
-            <td>サーバーを開始します。なお <code>server.py</code> 起動時には自動的に開始されます。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="stop 停止 サーバー">
-            <td><code>/stop</code></td>
-            <td>サーバーを停止します。<code>server.py</code> は実行状態のままなので、他のコマンドは引き続き使用できます。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="exit 終了 シャットダウン">
-            <td><code>/exit</code></td>
-            <td><code>server.py</code> を終了します。次回サーバー管理者が <code>server.py</code> を起動するまで bot を利用できなくなります。サーバー停止中にのみ使用できます。</td>
-            <td><span class="lv">2</span></td>
-          </tr>
-          <tr data-k="restart 再起動 リスタート">
-            <td><code>/restart</code></td>
-            <td>bot(<code>server.py</code>)を再起動します。アップデートは行いません。サーバー停止中にのみ使用できます。</td>
-            <td><span class="lv">2</span></td>
-          </tr>
-          <tr data-k="backup create バックアップ 作成 保存">
-            <td><code>/backup create &lt;path&gt;</code></td>
-            <td>サーバーデータをバックアップします。バックアップする対象(フォルダやファイル)を root ディレクトリからの相対パスで指定します(例: <code>world</code>)。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="backup apply バックアップ 復元 展開">
-            <td><code>/backup apply &lt;which&gt; &lt;path?&gt;</code></td>
-            <td>バックアップを指定したディレクトリに展開します。path が与えられない場合は root ディレクトリ(サーバー本体のフォルダ)に展開します。</td>
-            <td><span class="lv">3</span></td>
-          </tr>
-          <tr data-k="cmd serverin コマンド送信 コンソール minecraft">
-            <td><code>/cmd serverin &lt;server command&gt;</code></td>
-            <td>サーバーに対してコマンドを送信します(<code>.config</code> の <code>allow_cmd</code> で許可されたもののみ)。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="cmd stdin ls ファイル一覧 ディレクトリ">
-            <td><code>/cmd stdin ls &lt;path&gt;</code></td>
-            <td>ディレクトリ内のファイル一覧を返します。root ディレクトリはサーバー直上になります。</td>
-            <td><span class="lv">2</span></td>
-          </tr>
-          <tr data-k="cmd stdin mk ファイル作成 上書き">
-            <td><code>/cmd stdin mk &lt;path&gt; &lt;file?&gt;</code></td>
-            <td>ファイルを作成または上書きします。file 引数を渡さない場合は空のファイルを作成します。</td>
-            <td><span class="lv">3</span> *1</td>
-          </tr>
-          <tr data-k="cmd stdin rm ファイル削除">
-            <td><code>/cmd stdin rm &lt;path&gt;</code></td>
-            <td>指定されたファイルが存在した場合削除します。</td>
-            <td><span class="lv">2</span> *1</td>
-          </tr>
-          <tr data-k="cmd stdin rmdir ディレクトリ削除 フォルダ">
-            <td><code>/cmd stdin rmdir &lt;path&gt;</code></td>
-            <td>指定されたディレクトリが存在した場合削除します。ディレクトリ内に対して再帰的に適用されます。</td>
-            <td><span class="lv">2</span> *1</td>
-          </tr>
-          <tr data-k="cmd stdin mkdir ディレクトリ作成 フォルダ">
-            <td><code>/cmd stdin mkdir &lt;path&gt;</code></td>
-            <td>指定されたディレクトリを作成します。</td>
-            <td><span class="lv">2</span> *2</td>
-          </tr>
-          <tr data-k="cmd stdin send-discord ファイル送信 ダウンロード">
-            <td><code>/cmd stdin send-discord &lt;path&gt;</code></td>
-            <td>指定されたファイルを Discord に送信します。</td>
-            <td><span class="lv">2</span> *2</td>
-          </tr>
-          <tr data-k="cmd stdin wget ダウンロード url 取得">
-            <td><code>/cmd stdin wget &lt;url&gt; &lt;path?&gt;</code></td>
-            <td>指定のパスのファイルを url から得られたデータで上書きします。path 引数を渡さない場合は直上にファイルを生成します。</td>
-            <td><span class="lv">3</span> *1</td>
-          </tr>
-          <tr data-k="cmd stdin mv ファイル移動 リネーム">
-            <td><code>/cmd stdin mv &lt;src&gt; &lt;dest&gt;</code></td>
-            <td>指定した path を dest に移動します。</td>
-            <td><span class="lv">3</span> *1</td>
-          </tr>
-          <tr data-k="cmd stdin unzip zip 展開 解凍">
-            <td><code>/cmd stdin unzip &lt;path&gt;</code></td>
-            <td>指定した .zip ファイルをそのディレクトリに展開します。</td>
-            <td><span class="lv">2</span> *2</td>
-          </tr>
-          <tr data-k="logs ログ 表示">
-            <td><code>/logs &lt;file?&gt;</code></td>
-            <td>サーバーログを表示します。引数が与えられた場合は該当ファイルから、無い場合は現在のサーバーログを表示できる限り表示します。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="lang 言語 japanese english 日本語 英語">
-            <td><code>/lang &lt;"ja"/"en"&gt;</code></td>
-            <td>サーバーの言語を変更します。</td>
-            <td><span class="lv">2</span></td>
-          </tr>
-          <tr data-k="permission change 権限変更 レベル">
-            <td><code>/permission change &lt;level&gt; &lt;user&gt;</code></td>
-            <td>ユーザーの bot 利用権限を操作します。</td>
-            <td><span class="lv">4</span></td>
-          </tr>
-          <tr data-k="permission view 権限確認 表示">
-            <td><code>/permission view &lt;user&gt; &lt;detail?&gt;</code></td>
-            <td>プレイヤーの権限を表示します。</td>
-            <td><span class="lv">0</span></td>
-          </tr>
-          <tr data-k="tokengen トークン web ログイン">
-            <td><code>/tokengen</code></td>
-            <td>web アクセスのためのトークンを生成します。web ログイン画面で入力してください。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="update アップデート 更新 github">
-            <td><code>/update &lt;is_force?&gt;</code></td>
-            <td>GitHub にアクセスして最新の本体をダウンロードします。<code>is_force</code> を True にすると強制的にダウンロードします。</td>
-            <td><span class="lv">3</span></td>
-          </tr>
-          <tr data-k="announce embed アナウンス メッセージ送信 mimd">
-            <td><code>/announce embed &lt;file/txt&gt;</code></td>
-            <td>通常のテキストまたは <a href="https://github.com/sleeping-mikan/server-bot-v2/blob/main/py-builder/mimd.md" target="_blank" rel="noopener">mimd</a> 形式のテキスト/ファイルを指定して、bot として Discord にメッセージを送信します。テキストの場合、改行には <code>\n</code> を利用してください。</td>
-            <td><span class="lv">4</span></td>
-          </tr>
-          <tr data-k="terminal set ターミナル コンソール ログ転送 チャンネル">
-            <td><code>/terminal set &lt;ch?&gt;</code></td>
-            <td>Discord のチャンネル ID を与えると、サーバーのログをそのチャンネルに送信します。また標準入力を受け取ります。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="terminal del ターミナル解除">
-            <td><code>/terminal del</code></td>
-            <td>ターミナルの紐づけを解除します。</td>
-            <td><span class="lv">1</span></td>
-          </tr>
-          <tr data-k="status 状態 ステータス cpu バージョン">
-            <td><code>/status</code></td>
-            <td>現在のサーバーの状態を表示します。</td>
-            <td><span class="lv">0</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <section class="cmd-group" id="cmd-server">
+      <h2>サーバー操作</h2>
+      <div class="table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr><th>コマンド</th><th>実行結果</th><th>初期権限</th></tr>
+          </thead>
+          <tbody>
+            <tr data-k="start 起動 開始 サーバー">
+              <td><code>/start</code></td>
+              <td>サーバーを開始します。なお <code>server.py</code> 起動時には自動的に開始されます。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="stop 停止 サーバー">
+              <td><code>/stop</code></td>
+              <td>サーバーを停止します。<code>server.py</code> は実行状態のままなので、他のコマンドは引き続き使用できます。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="restart 再起動 リスタート">
+              <td><code>/restart</code></td>
+              <td>bot(<code>server.py</code>)を再起動します。アップデートは行いません。サーバー停止中にのみ使用できます。</td>
+              <td><span class="lv">2</span></td>
+            </tr>
+            <tr data-k="exit 終了 シャットダウン">
+              <td><code>/exit</code></td>
+              <td><code>server.py</code> を終了します。次回サーバー管理者が <code>server.py</code> を起動するまで bot を利用できなくなります。サーバー停止中にのみ使用できます。</td>
+              <td><span class="lv">2</span></td>
+            </tr>
+            <tr data-k="cmd serverin コマンド送信 コンソール minecraft">
+              <td><code>/cmd serverin &lt;server command&gt;</code></td>
+              <td>サーバーに対してコマンドを送信します(<code>.config</code> の <code>allow_cmd</code> で許可されたもののみ)。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cmd-group" id="cmd-files">
+      <h2>バックアップとファイル操作</h2>
+      <div class="table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr><th>コマンド</th><th>実行結果</th><th>初期権限</th></tr>
+          </thead>
+          <tbody>
+            <tr data-k="backup create バックアップ 作成 保存">
+              <td><code>/backup create &lt;path&gt;</code></td>
+              <td>サーバーデータをバックアップします。バックアップする対象(フォルダやファイル)を root ディレクトリからの相対パスで指定します(例: <code>world</code>)。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="backup apply バックアップ 復元 展開">
+              <td><code>/backup apply &lt;which&gt; &lt;path?&gt;</code></td>
+              <td>バックアップを指定したディレクトリに展開します。path が与えられない場合は root ディレクトリ(サーバー本体のフォルダ)に展開します。</td>
+              <td><span class="lv">3</span></td>
+            </tr>
+            <tr data-k="cmd stdin ls ファイル一覧 ディレクトリ">
+              <td><code>/cmd stdin ls &lt;path&gt;</code></td>
+              <td>ディレクトリ内のファイル一覧を返します。root ディレクトリはサーバー直上になります。</td>
+              <td><span class="lv">2</span></td>
+            </tr>
+            <tr data-k="cmd stdin mk ファイル作成 上書き">
+              <td><code>/cmd stdin mk &lt;path&gt; &lt;file?&gt;</code></td>
+              <td>ファイルを作成または上書きします。file 引数を渡さない場合は空のファイルを作成します。</td>
+              <td><span class="lv">3</span><small class="td-note">*1</small></td>
+            </tr>
+            <tr data-k="cmd stdin rm ファイル削除">
+              <td><code>/cmd stdin rm &lt;path&gt;</code></td>
+              <td>指定されたファイルが存在した場合削除します。</td>
+              <td><span class="lv">2</span><small class="td-note">*1</small></td>
+            </tr>
+            <tr data-k="cmd stdin rmdir ディレクトリ削除 フォルダ">
+              <td><code>/cmd stdin rmdir &lt;path&gt;</code></td>
+              <td>指定されたディレクトリが存在した場合削除します。ディレクトリ内に対して再帰的に適用されます。</td>
+              <td><span class="lv">2</span><small class="td-note">*1</small></td>
+            </tr>
+            <tr data-k="cmd stdin mkdir ディレクトリ作成 フォルダ">
+              <td><code>/cmd stdin mkdir &lt;path&gt;</code></td>
+              <td>指定されたディレクトリを作成します。</td>
+              <td><span class="lv">2</span><small class="td-note">*2</small></td>
+            </tr>
+            <tr data-k="cmd stdin send-discord ファイル送信 ダウンロード">
+              <td><code>/cmd stdin send-discord &lt;path&gt;</code></td>
+              <td>指定されたファイルを Discord に送信します。</td>
+              <td><span class="lv">2</span><small class="td-note">*2</small></td>
+            </tr>
+            <tr data-k="cmd stdin wget ダウンロード url 取得">
+              <td><code>/cmd stdin wget &lt;url&gt; &lt;path?&gt;</code></td>
+              <td>指定のパスのファイルを url から得られたデータで上書きします。path 引数を渡さない場合は直上にファイルを生成します。</td>
+              <td><span class="lv">3</span><small class="td-note">*1</small></td>
+            </tr>
+            <tr data-k="cmd stdin mv ファイル移動 リネーム">
+              <td><code>/cmd stdin mv &lt;src&gt; &lt;dest&gt;</code></td>
+              <td>指定した path を dest に移動します。</td>
+              <td><span class="lv">3</span><small class="td-note">*1</small></td>
+            </tr>
+            <tr data-k="cmd stdin unzip zip 展開 解凍">
+              <td><code>/cmd stdin unzip &lt;path&gt;</code></td>
+              <td>指定した .zip ファイルをそのディレクトリに展開します。</td>
+              <td><span class="lv">2</span><small class="td-note">*2</small></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cmd-group" id="cmd-info">
+      <h2>情報と権限</h2>
+      <div class="table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr><th>コマンド</th><th>実行結果</th><th>初期権限</th></tr>
+          </thead>
+          <tbody>
+            <tr data-k="status 状態 ステータス cpu バージョン">
+              <td><code>/status</code></td>
+              <td>現在のサーバーの状態を表示します。</td>
+              <td><span class="lv">0</span></td>
+            </tr>
+            <tr data-k="help ヘルプ 使い方">
+              <td><code>/help</code></td>
+              <td>Discord 上に help と web リンクを表示します。web サイトへ外部からアクセスするには追加のポート開放が必要です。</td>
+              <td><span class="lv">0</span></td>
+            </tr>
+            <tr data-k="ip アドレス address">
+              <td><code>/ip</code></td>
+              <td>この bot(サーバー)が実行している IP アドレスを返します。</td>
+              <td><span class="lv">0</span><small class="td-note">config で有効/無効を切替</small></td>
+            </tr>
+            <tr data-k="logs ログ 表示">
+              <td><code>/logs &lt;file?&gt;</code></td>
+              <td>サーバーログを表示します。引数が与えられた場合は該当ファイルから、無い場合は現在のサーバーログを表示できる限り表示します。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="permission view 権限確認 表示">
+              <td><code>/permission view &lt;user&gt; &lt;detail?&gt;</code></td>
+              <td>プレイヤーの権限を表示します。</td>
+              <td><span class="lv">0</span></td>
+            </tr>
+            <tr data-k="permission change 権限変更 レベル">
+              <td><code>/permission change &lt;level&gt; &lt;user&gt;</code></td>
+              <td>ユーザーの bot 利用権限を操作します。</td>
+              <td><span class="lv">4</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cmd-group" id="cmd-ops">
+      <h2>運用・その他</h2>
+      <div class="table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr><th>コマンド</th><th>実行結果</th><th>初期権限</th></tr>
+          </thead>
+          <tbody>
+            <tr data-k="terminal set ターミナル コンソール ログ転送 チャンネル">
+              <td><code>/terminal set &lt;ch?&gt;</code></td>
+              <td>Discord のチャンネル ID を与えると、サーバーのログをそのチャンネルに送信します。また標準入力を受け取ります。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="terminal del ターミナル解除">
+              <td><code>/terminal del</code></td>
+              <td>ターミナルの紐づけを解除します。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="tokengen トークン web ログイン">
+              <td><code>/tokengen</code></td>
+              <td>web アクセスのためのトークンを生成します。web ログイン画面で入力してください。</td>
+              <td><span class="lv">1</span></td>
+            </tr>
+            <tr data-k="update アップデート 更新 github">
+              <td><code>/update &lt;is_force?&gt;</code></td>
+              <td>GitHub にアクセスして最新の本体をダウンロードします。<code>is_force</code> を True にすると強制的にダウンロードします。</td>
+              <td><span class="lv">3</span></td>
+            </tr>
+            <tr data-k="lang 言語 japanese english 日本語 英語">
+              <td><code>/lang &lt;"ja"/"en"&gt;</code></td>
+              <td>サーバーの言語を変更します。</td>
+              <td><span class="lv">2</span></td>
+            </tr>
+            <tr data-k="announce embed アナウンス メッセージ送信 mimd">
+              <td><code>/announce embed &lt;file/txt&gt;</code></td>
+              <td>通常のテキストまたは <a href="https://github.com/sleeping-mikan/server-bot-v2/blob/main/py-builder/mimd.md" target="_blank" rel="noopener">mimd</a> 形式のテキスト/ファイルを指定して、bot として Discord にメッセージを送信します。テキストの場合、改行には <code>\n</code> を利用してください。</td>
+              <td><span class="lv">4</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <h2 id="notes">注記</h2>
     <p>
@@ -219,7 +262,21 @@
       各コマンドに関係する設定は <a href="config.html">.config リファレンス</a> を参照してください。
       「標準入力」「パス」などの用語は<a href="setup.html#glossary">導入ガイドの用語集</a>で説明しています。
     </p>
+
+    <nav class="page-nav">
+      <a class="page-nav-prev" href="extensions.html"><span>前のページ</span><strong>拡張機能</strong></a>
+      <a class="page-nav-next" href="config.html"><span>次のページ</span><strong>.config リファレンス</strong></a>
+    </nav>
   </main>
+
+  <aside class="toc">
+    <div class="toc-title">このページ</div>
+    <a href="#cmd-server">サーバー操作</a>
+    <a href="#cmd-files">バックアップとファイル操作</a>
+    <a href="#cmd-info">情報と権限</a>
+    <a href="#cmd-ops">運用・その他</a>
+    <a href="#notes">注記</a>
+  </aside>
 </div>
 
 <footer class="site-footer">
@@ -230,7 +287,8 @@
 (function () {
   var box = document.getElementById("filter");
   var count = document.getElementById("filter-count");
-  var rows = Array.prototype.slice.call(document.querySelectorAll("#cmd-table tbody tr"));
+  var rows = Array.prototype.slice.call(document.querySelectorAll(".cmd-table tbody tr"));
+  var groups = Array.prototype.slice.call(document.querySelectorAll(".cmd-group"));
   function update() {
     var q = box.value.trim().toLowerCase();
     var visible = 0;
@@ -240,12 +298,20 @@
       tr.style.display = hit ? "" : "none";
       if (hit) visible++;
     });
+    /* すべての行が非表示になったグループは見出しごと隠す */
+    groups.forEach(function (g) {
+      var any = Array.prototype.some.call(g.querySelectorAll("tbody tr"), function (tr) {
+        return tr.style.display !== "none";
+      });
+      g.style.display = any ? "" : "none";
+    });
     count.textContent = q === "" ? rows.length + " 件のコマンド" : visible + " / " + rows.length + " 件がヒット";
   }
   box.addEventListener("input", update);
   update();
 })();
 </script>
+<script src="assets/site.js" defer></script>
 
 </body>
 </html>
