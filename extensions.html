@@ -181,6 +181,106 @@ append_task(heartbeat)</code></pre>
       bot の起動完了後に登録してもループは開始されません。
     </div>
 
+    <h3 id="api-log-tailer"><code>core.log_tailer.LogTailer</code></h3>
+    <pre><code>from core.log_tailer import LogTailer, LogTailerEmptyError
+
+LogTailer(
+    source: Callable[[], Sequence[str]] = LogManager.snapshot_log_msg,
+    poll_interval: float = 1.0,
+)</code></pre>
+    <p>
+      ログ(またはそれに類する文字列の並び)を「末尾からの新規追加分だけ」読み続けたい場合の
+      非同期イテレータです。<code>async for line in tailer:</code> で、新しい行が来るたびに
+      1行ずつ受け取れます。新しい行が無い間は内部で <code>poll_interval</code> 秒おきに
+      待ち続けるため、呼び出し側でスリープを挟む必要はありません。
+    </p>
+    <figure class="code">
+    <figcaption>最小構成の例(既定ソースをそのまま使う場合)</figcaption>
+    <pre><code>from core.log_tailer import LogTailer, LogTailerEmptyError
+
+@tasks.loop(seconds=5)
+async def watch_logs():
+    tailer = LogTailer(poll_interval=2.0)
+    try:
+        async for line in tailer:
+            if "error" in line.lower():
+                logger.info(f"error line detected: {line}")
+    except LogTailerEmptyError:
+        pass  # まだ何もログが無い(通常は起きない、下記参照)
+
+append_task(watch_logs)</code></pre>
+    </figure>
+    <figure class="code">
+    <figcaption>実践的な例(有効/無効を切り替えられる機能で、既存分は読み飛ばす)</figcaption>
+    <pre><code>from core.log_tailer import LogTailer, LogTailerEmptyError
+
+@tasks.loop(seconds=5)  # 本体がほぼ戻らないため間隔自体は無効時の待機にしか使われない
+async def watch_logs():
+    while True:
+        if not state["enabled"]:
+            await asyncio.sleep(5)
+            continue
+
+        tailer = LogTailer(poll_interval=2.0)
+        # tail開始時点で既にある内容は最初のバッチで丸ごと返ってくるため、
+        # その時点の最後の行が来るまでは読み飛ばし、以降の新規分だけを扱う
+        current = LogManager.snapshot_log_msg()
+        skip_until = current[-1] if current else None
+        try:
+            async for line in tailer:
+                if not state["enabled"]:
+                    break  # 無効化された。tailerを作り直すため外側のwhileへ戻る
+                if skip_until is not None:
+                    if line == skip_until:
+                        skip_until = None
+                    continue
+                if "error" in line.lower():
+                    logger.info(f"error line detected: {line}")
+        except LogTailerEmptyError:
+            await asyncio.sleep(5)
+
+append_task(watch_logs)</code></pre>
+    </figure>
+    <p>
+      <code>async for</code> を開始した瞬間、その時点で <code>source()</code> が返す内容は
+      「既存の内容」として丸ごと最初のバッチで返されます。過去分を無視して以降の新規分だけを
+      扱いたい場合は、<code>tailer</code> を作る前に <code>source()</code> を一度呼んで最後の行を
+      記録しておき、<code>async for</code> 内でその行が来るまでの分をスキップしてください
+      (上の実践的な例を参照)。<code>source()</code> の呼び出し時点で中身が空だった場合は
+      <code>LogTailerEmptyError</code> が送出されます(既定ソースではほぼ発生しません)。
+    </p>
+    <p>
+      <code>source</code> が指す先の実体が入れ替わった場合(監視対象のログファイルが
+      切り替わった等)でも、呼び出し側で明示的にリセットする必要はなく自動的に追従します。
+      既存の <code>tailer</code> を作り直したい場合(例えば <code>enabled</code> を再度
+      <code>true</code> にする場合)は、単純に新しい <code>LogTailer(...)</code> インスタンスを
+      作ってやり直してください(インスタンスを使い回して <code>async for</code> を
+      再開することはできません)。
+    </p>
+    <p><strong>既定のソース</strong>: <code>LogManager.snapshot_log_msg()</code> です。
+      全ロガーが混ざった直近 100 件の共有バッファのスナップショットで、コンソール表示用の
+      ANSI カラーコード(<code>\033[...m</code>)付きの文字列が入っており、管理対象サーバーの
+      標準出力も常にここに含まれます。bot が起動していれば通常空にはなりません。
+    </p>
+    <div class="note">
+      サーバーの発言だけを拾うなど特定の内容だけを扱いたい場合、他ロガーの行が混ざっていても
+      正規表現などで目的の行だけを <code>search()</code> すれば実用上は問題ありません。
+      ANSI カラーコードが邪魔な場合は、マッチさせる前に
+      <code>re.sub(r"\x1b\[[0-9;]*m", "", line)</code> のような正規表現で単純に除去してください
+      (色の意味づけを解釈する必要はなく、除去するだけで元のテキストが残ります)。
+      直近 100 件という上限を超えたくない場合や、特定のファイル・別ソースを対象にしたい場合は、
+      <code>source</code> に <code>Callable[[], Sequence[str]]</code> を満たす自作の関数を渡せます
+      (呼ばれるたびに「現在の全内容」を返す関数であれば何でもかまいません)。
+    </div>
+    <div class="note">
+      <code>async for line in tailer:</code> は新しい行が来るまで戻ってこない無限ループです。
+      <code>append_task</code> に登録する <code>@tasks.loop</code> のコルーチン本体としてそのまま
+      書いても問題ありません(<code>seconds=...</code> の値自体は本体が戻らない限り使われません)。
+      <code>/exit</code> / <code>/restart</code> 等での終了時、登録されたループは
+      <code>stop()</code>(現在の1回の完了を待つ)ではなく <code>cancel()</code>
+      (即座に強制キャンセル)されるため、コルーチンが戻ってこなくても正しく中断されます。
+    </div>
+
     <h3 id="api-print-user"><code>bot.utils.print_user(logger, user)</code></h3>
     <pre><code>async print_user(logger: logging.Logger, user: discord.User) -&gt; None</code></pre>
     <p>
@@ -236,6 +336,26 @@ append_task(heartbeat)</code></pre>
           <tr><td><code>ctx.text.lang</code></td><td><code>str</code></td><td>現在の表示言語(<code>"ja"</code> / <code>"en"</code>)。</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <h3 id="api-on-message">Discord のメッセージを購読する(<code>on_message</code> は使えない)</h3>
+    <p>
+      bot 本体は <code>discord.Client</code>(<code>discord.ext.commands.Bot</code> ではありません)
+      を使っており、拡張機能から追加のイベントリスナーを登録する
+      <code>Client.add_listener()</code> のような仕組みはありません。<code>bot.client.client</code>
+      を import して <code>client.on_message = ...</code> のように直接代入すると、
+      bot 本体が既に <code>@client.event</code> で登録している <code>on_message</code>
+      (<code>/terminal set</code> のターミナルチャンネル機能等が依存しています)を
+      上書きして壊してしまうため行わないでください。
+    </p>
+    <div class="warn">
+      特定チャンネルの発言を継続的に拾いたい場合は、<code>on_message</code> を使わず、
+      <code>append_task</code> のループで対象チャンネルの
+      <code>channel.history(limit=..., after=..., oldest_first=True)</code>
+      (discord.py 標準の REST API)を定期的にポーリングし、前回チェック以降のメッセージ ID
+      だけを処理する方式にしてください。<code>channel</code> は
+      <code>bot.client.client.get_channel(channel_id)</code>
+      (無ければ <code>await client.fetch_channel(channel_id)</code>)で取得できます。
     </div>
 
     <h2 id="v2">v2 からの移行</h2>
