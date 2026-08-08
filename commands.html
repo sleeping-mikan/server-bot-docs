@@ -239,11 +239,41 @@
             </tr>
             <tr data-k="announce embed アナウンス メッセージ送信 mimd">
               <td><code>/announce embed &lt;file/txt&gt;</code></td>
-              <td>通常のテキストまたは <a href="https://github.com/sleeping-mikan/server-bot-v2/blob/main/py-builder/mimd.md" target="_blank" rel="noopener">mimd</a> 形式のテキスト/ファイルを指定して、bot として Discord にメッセージを送信します。テキストの場合、改行には <code>\n</code> を利用してください。</td>
+              <td>通常のテキストまたは <a href="#mimd">mimd</a> 形式のテキスト/ファイルを指定して、bot として Discord にメッセージを送信します。テキストの場合、改行には <code>\n</code> を利用してください。</td>
               <td><span class="lv">4</span></td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <h3 id="mimd">mimd 形式について</h3>
+      <p>
+        mimd は <code>/announce embed</code> 専用の簡易記法です(Minimal embed markdown)。
+        プレーンテキストとしてもそのまま送信できますが、以下の2つの記法で
+        Discord の embed(タイトル・複数フィールド)を組み立てられます。
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>記法</th><th>意味</th></tr></thead>
+          <tbody>
+            <tr><td><code>|title|見出し</code></td><td>embed 全体のタイトルを設定します(行頭が対象。先頭に1回だけ書きます。2回目以降は無視されます)。</td></tr>
+            <tr><td><code>#見出し</code></td><td>新しいフィールドを開始し、その行の <code>#</code> 以降(前後の空白は除去)をフィールド名にします(行頭が対象。<code>#</code> と見出しの間の空白はあってもなくても構いません)。</td></tr>
+            <tr><td>(それ以外の行)</td><td>直前の <code>#</code> フィールドの本文として追加されます(<code>#</code> より前に書いた行は名前無しの最初のフィールドになります)。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="code">
+      <figcaption>入力例</figcaption>
+      <pre><code>|title|メンテナンスのお知らせ
+# 日時
+8/10 21:00〜22:00
+# 内容
+サーバーの再起動を行います</code></pre>
+      </figure>
+      <div class="note">
+        テキストの改行はそのまま入力すると Discord のスラッシュコマンド欄には入力できないため、
+        <code>txt</code> で渡す場合は <code>\n</code> と入力してください(送信時に実際の改行に変換されます)。
+        <code>file</code> でテキストファイルを渡す場合はファイル内の改行をそのまま使えます。
       </div>
     </section>
 
