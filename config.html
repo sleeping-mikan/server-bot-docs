@@ -77,8 +77,9 @@
           <tr><td><code>server_char_encoding</code></td><td>server のコンソール出力を受け取る際に使用する文字コード。</td></tr>
           <tr><td><code>log.server</code> / <code>log.all</code></td><td>各種ログをファイルに保存するか否か。<code>server</code> を true にするとサーバー本体の実行ログを <code>server_path</code> 配下の <code>logs</code> フォルダに、<code>all</code> を true にすると bot 自体のログを <code>server.py</code> と同じ場所の <code>logs</code> フォルダに保存します(いずれも直下ではなく <code>logs</code> フォルダの中です)。</td></tr>
           <tr><td><code>web.secret_key</code></td><td>Flask で利用する鍵(<code>app.secret_key</code>)。十分に強固な文字列を設定してください。</td></tr>
-          <tr><td><code>web.port</code></td><td>web サーバーのポート番号。<code>/cmd stdin send-discord</code> でもこのポート番号を利用します。</td></tr>
+          <tr><td><code>web.port</code></td><td>web サーバーが実際に bind するポート番号(内部ポート)。<code>web.public_url</code> が未設定の場合、<code>/help</code> の表示や <code>/cmd stdin send-discord</code> のダウンロードリンクにもこのポート番号がそのまま使われます。</td></tr>
           <tr><td><code>web.use_front_page</code></td><td>web ページからの操作を許可するか否か。<code>false</code> の場合でもファイルダウンロードはできます。</td></tr>
+          <tr><td><code>web.public_url</code></td><td>web コンソールに外部からアクセスする際のベースURL(例: <code>https://mydomain.example</code>)。既定は <code>null</code> で、その場合は自動取得した外部IPと <code>web.port</code> から <code>http://&lt;IP&gt;:&lt;port&gt;</code> を組み立てます。<strong>リバースプロキシ配下で運用する場合</strong>は、実際に外部からアクセスするスキーム・ドメイン・ポートが内部の <code>web.port</code> と一致しないため、ここに外部向けURLを設定してください。<code>/help</code> の表示と <code>/cmd stdin send-discord</code> のダウンロードリンクの両方に反映されます。</td></tr>
           <tr><td><code>discord_commands.<wbr>permission.<wbr>commands_level</code></td><td>すべてのコマンドについて必要権限レベルを定義するリスト。コマンド実行には書き込まれた値以上の権限が必要です。</td></tr>
           <tr><td><code>discord_commands.<wbr>ip.<wbr>address.<wbr>prefix</code></td><td><code>/ip</code> で表示するアドレスの前に付加する文字列。</td></tr>
           <tr><td><code>discord_commands.<wbr>ip.<wbr>address.<wbr>suffix</code></td><td><code>/ip</code> で表示するアドレスの後に付加する文字列。</td></tr>
@@ -128,7 +129,8 @@
     "web": {
         "secret_key": "YOURSECRETKEY",
         "port": 80,
-        "use_front_page": true
+        "use_front_page": true,
+        "public_url": null
     },
     "discord_commands": {
         "permission": {

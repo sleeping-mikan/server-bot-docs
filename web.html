@@ -61,6 +61,14 @@
       リバースプロキシ(外部からのアクセスを代わりに受けて転送するサーバー。nginx、Cloudflare Tunnel など)を利用してください。
       これはサーバー運用の知識がある方向けの構成です。
     </p>
+    <div class="note">
+      リバースプロキシを使う場合、<code>/help</code> の web URL 表示や
+      <code>/cmd stdin send-discord</code> のダウンロードリンクを、bot が実際に bind している
+      内部アドレス(<code>http://&lt;IP&gt;:&lt;web.port&gt;</code>)のまま自動生成すると、
+      外部から実際にアクセスするスキーム・ドメイン・ポート(例: <code>https://mydomain.example</code>)と
+      食い違います。<a href="config.html"><code>.config</code></a> の <code>web.public_url</code> に
+      外部向けのURLを設定すると、この2箇所の表示・リンクにそちらが使われるようになります。
+    </div>
 
     <h2 id="config">.config の関連設定</h2>
     <p>
