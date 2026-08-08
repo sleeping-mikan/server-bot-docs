@@ -193,7 +193,8 @@ python server.py</code></pre>
     <p>
       <code>.config</code> の <code>update.auto</code> が <code>true</code> の場合、起動時に GitHub の最新コミットを確認して自動更新します。
       Discord から <code>/update</code> を実行して手動で更新することもできます。
-      参照するブランチ(GitHub 上のバージョン系統の名前)は <code>update.branch</code> で変更できます(通常は <code>main</code> のままにしてください)。
+      参照するブランチ(GitHub 上のバージョン系統の名前)は <code>update.branch</code> で変更できます(通常は既定値の <code>release</code> のままにしてください。試験的な更新を追いたい場合のみ <code>beta</code> に変更してください)。
+      存在しないブランチ名を指定した場合は自動的に <code>release</code> を参照します。
     </p>
 
     <h3 id="java">補足: Java 版 Minecraft サーバー(server.jar)を起動する場合</h3>
@@ -274,7 +275,7 @@ python server.py</code></pre>
           <tr><td>JSON</td><td>設定などを書くためのテキストの書式。<code>.config</code> で使われています。</td></tr>
           <tr><td>標準入力</td><td>起動中のサーバーのコンソール(黒い画面)に直接コマンドを打ち込むのと同じ入力のこと。</td></tr>
           <tr><td>ポート番号 / ポート開放</td><td>ポート番号は通信の窓口の番号。ポート開放は、自宅のルーターを設定して外部からその窓口への通信を許可することです。</td></tr>
-          <tr><td>ブランチ</td><td>GitHub 上でのバージョンの系統名。通常は <code>main</code>(安定した最新版)を使います。</td></tr>
+          <tr><td>ブランチ</td><td>GitHub 上でのバージョンの系統名。通常は <code>release</code>(安定した最新版)を使います。試験的な更新を追いたい場合は <code>beta</code> も選べます。</td></tr>
           <tr><td>リバースプロキシ</td><td>外部からのアクセスを代わりに受けて転送してくれるサーバー。https 化などに使います(上級者向け)。</td></tr>
         </tbody>
       </table>

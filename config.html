@@ -69,7 +69,7 @@
         <tbody>
           <tr><td><code>allow</code></td><td>各コマンドの実行を許可するかどうか(現在は <code>/ip</code> にのみ実装されています)。</td></tr>
           <tr><td><code>update.auto</code></td><td>サーバー本体(bot)を起動時に自動更新するか否か。</td></tr>
-          <tr><td><code>update.branch</code></td><td>自動更新時に参照する GitHub ブランチ名。存在しないブランチを指定すると更新に失敗します(通常は <code>main</code>)。</td></tr>
+          <tr><td><code>update.branch</code></td><td>自動更新時に参照する GitHub ブランチ名(既定は安定版の <code>release</code>。試験的な更新を追いたい場合は <code>beta</code> も利用できます)。存在しないブランチを指定した場合は自動的に <code>release</code> にフォールバックします。</td></tr>
           <tr><td><code>server_path</code></td><td>server 本体のパス。例えば <code>D:\a\server.jar</code> に配置されていれば <code>D:\\a\\</code> または <code>D:/a/</code>。</td></tr>
           <tr><td><code>server_name</code></td><td>server 本体のファイル名。Java 版 Minecraft の場合、サーバー起動に利用する <code>server.bat</code> 等を入力してください(GUI 起動させないでください)。</td></tr>
           <tr><td><code>server_args</code></td><td>server 起動時のコンソール引数。例えば Terraria を起動する場合 <code>-world /path/to/world.wld</code> を入力してください。</td></tr>
@@ -113,7 +113,7 @@
     },
     "update": {
         "auto": true,
-        "branch": "main"
+        "branch": "release"
     },
     "server_path": "path/to/serverdir/",
     "server_name": "bedrock_server.exe",
