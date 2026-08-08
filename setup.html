@@ -123,8 +123,10 @@
     <pre><code>pip install -r requirements.txt
 python server.py</code></pre>
     <p>
-      初回実行では、<code>server.py</code> と同じフォルダに設定ファイル <code>.config</code> と <code>.token</code> が生成され、
-      「please write token in ...」に続いて「please press any key to continue...」と表示されて停止します。
+      初回実行では、<code>server.py</code> と同じフォルダに設定ファイル <code>.config</code> が生成され、
+      <code>discord_token</code> が未設定のため
+      「token が未設定です。.config の discord_token に Discord bot のトークンを記入してください。」に続いて
+      「please press any key to continue...」と表示されて停止します。
       <strong>これは正常な動作です。</strong>
       何かキーを押すとプログラムが終了するので、続けて「3. 初期設定」に進んでください。
     </p>
@@ -145,14 +147,14 @@ python server.py</code></pre>
       <code>server.py</code> を再実行すると、再ダウンロードされます。
     </div>
     <div class="note">
-      <code>.token</code> が生成されず「not exist server_path dir」と表示される場合は、
+      「not exist server_path dir」と表示される場合は、
       <code>.config</code> 内の <code>server_path</code> のフォルダが存在していません。
       サーバー本体が存在するフォルダのパスに修正して再実行してください。
     </div>
 
     <h2 id="init">3. 初期設定</h2>
     <ol class="steps">
-      <li><code>.token</code> をメモ帳などのテキストエディタで開き、「ここにtokenを入力」と書かれた内容を消して、<a href="#prep-bot">前提条件 (2)</a> で控えた Discord bot のトークンに書き換えて保存する</li>
+      <li><code>.config</code> をメモ帳などのテキストエディタで開き、<code>discord_token</code> の値(初期値は空文字列 <code>""</code>)を、<a href="#prep-bot">前提条件 (2)</a> で控えた Discord bot のトークンに書き換えて保存する</li>
       <li><code>.config</code> をメモ帳などで開き、<code>server_name</code> をサーバー本体のファイル名(拡張子まで含む。例: <code>bedrock_server.exe</code>。Java 版の jar を bat 経由で起動する場合はその <code>start.bat</code> など)に書き換える</li>
       <li><code>server.py</code> をサーバー本体と別のフォルダに置いた場合のみ、<code>server_path</code> をサーバー本体があるフォルダのパスに書き換える</li>
       <li>再度 <code>python server.py</code> を実行する</li>
@@ -245,12 +247,12 @@ python server.py</code></pre>
             <td><code>server_path</code> のフォルダ内に <code>server_name</code> のファイルが見つかりません。<code>server_name</code> が実際のファイル名(拡張子まで含む)と一致しているか確認してください。</td>
           </tr>
           <tr>
-            <td><code>please write token in …</code> / <code>token が未設定です</code></td>
-            <td><code>.token</code> にトークンが記入されていません。<a href="#init">初期設定</a>の手順 1 を行ってから再実行してください。</td>
+            <td><code>token が未設定です</code></td>
+            <td><code>.config</code> の <code>discord_token</code> にトークンが記入されていません。<a href="#init">初期設定</a>の手順 1 を行ってから再実行してください。</td>
           </tr>
           <tr>
             <td><code>トークンが無効です</code></td>
-            <td><code>.token</code> の内容が正しくありません。前後に余計な文字や空白が入っていないか確認するか、Discord Developer Portal でトークンを再発行(Reset Token)して貼り直してください。</td>
+            <td><code>.config</code> の <code>discord_token</code> の内容が正しくありません。前後に余計な文字や空白が入っていないか確認するか、Discord Developer Portal でトークンを再発行(Reset Token)して貼り直してください。</td>
           </tr>
           <tr>
             <td>Discord で <code>/</code> を打ってもコマンド候補が出ない</td>
